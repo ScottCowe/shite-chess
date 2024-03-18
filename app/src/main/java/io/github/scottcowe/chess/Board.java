@@ -27,7 +27,17 @@ public class Board {
     this.boardArray[index] = piece; 
   }
 
+  public int getPiece(int index) {
+    return this.boardArray[index];
+  }
+
   public static char getPieceByNibble(int piece) {
+    if (piece == 1) {
+      return 'K';
+    }
+    else if (piece == 9) {
+      return 'p';
+    }
     return ' ';
   }
 
@@ -35,8 +45,29 @@ public class Board {
   public String toString() {
     String seperator = " + - + - + - + - + - + - + - + - + \n";
     String board = seperator;
+    String[] rows = new String[8];
 
-    // Write board
+    // For each index from end
+    //  if 8|(i+1) push \n to board
+    //  push "{piece} | " to board
+    //  if 8|i 
+    //    push " | "
+    //    push seperator
+    int currentRow = 7;
+    for (int i = 63; i >= 0; i--) {
+      if ((i + 1) % 8 == 0) {
+        rows[currentRow] = " | \n";
+      }
+      rows[currentRow] = " | " + this.getPieceByNibble(this.getPiece(i)) + rows[currentRow];
+      if (i % 8 == 0) {
+        currentRow--;
+      }
+    }
+
+    for (int i = 7; i >= 0; i--) {
+      board += rows[i];
+      board += seperator;
+    }
 
     return board;
   }
