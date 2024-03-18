@@ -20,6 +20,8 @@ public class Board {
 
   public Board() {
     this.setPiece(1, 0);
+    this.setPiece(11, 7);
+    this.setPiece(4, 8);
     this.setPiece(9, 63);
   }
 
@@ -32,13 +34,31 @@ public class Board {
   }
 
   public static char getPieceByNibble(int piece) {
-    if (piece == 1) {
-      return 'K';
+    boolean isWhite = (piece & 8) == 0;
+    char pieceChar = ' '; 
+
+    switch(piece & 7) {
+      case 1:
+        pieceChar = 'K';
+        break;
+      case 2:
+        pieceChar = 'Q';
+        break;
+      case 3:
+        pieceChar = 'R';
+        break; 
+      case 4:
+        pieceChar = 'B';
+        break;
+      case 5:
+        pieceChar = 'N';
+        break;
+      case 6:
+        pieceChar = 'P';
+        break;
     }
-    else if (piece == 9) {
-      return 'p';
-    }
-    return ' ';
+
+    return isWhite ? pieceChar : Character.toLowerCase(pieceChar);
   }
 
   @Override
@@ -47,18 +67,14 @@ public class Board {
     String board = seperator;
     String[] rows = new String[8];
 
-    // For each index from end
-    //  if 8|(i+1) push \n to board
-    //  push "{piece} | " to board
-    //  if 8|i 
-    //    push " | "
-    //    push seperator
     int currentRow = 7;
     for (int i = 63; i >= 0; i--) {
       if ((i + 1) % 8 == 0) {
         rows[currentRow] = " | \n";
       }
-      rows[currentRow] = " | " + this.getPieceByNibble(this.getPiece(i)) + rows[currentRow];
+
+      rows[currentRow] = " | " + Board.getPieceByNibble(this.getPiece(i)) + rows[currentRow];
+
       if (i % 8 == 0) {
         currentRow--;
       }
