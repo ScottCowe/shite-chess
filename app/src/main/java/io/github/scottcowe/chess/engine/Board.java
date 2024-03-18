@@ -1,4 +1,7 @@
-package io.github.scottcowe.chess;
+package io.github.scottcowe.chess.engine;
+
+import java.util.List;
+import java.util.ArrayList;
 
 public class Board {
   // Each piece is stored as a nibble
@@ -18,19 +21,24 @@ public class Board {
   //  b1 is index 8, c1 is index 16, ...
   private int[] boardArray = new int[64];
 
-  public Board() {
-    this.setPiece(1, 0);
-    this.setPiece(11, 7);
-    this.setPiece(4, 8);
-    this.setPiece(9, 63);
-  }
-
   public void setPiece(int piece, int index) {
     this.boardArray[index] = piece; 
   }
 
   public int getPiece(int index) {
     return this.boardArray[index];
+  }
+
+  public List<Integer> getPieceIndexesByNibble(int piece) {
+    List<Integer> indexes = new ArrayList<Integer>();
+
+    for (int i = 0; i < 64; i++) {
+      if (this.getPiece(i) == piece) {
+        indexes.add(i);
+      }
+    }
+
+    return indexes;
   }
 
   public static char getPieceByNibble(int piece) {
@@ -86,5 +94,37 @@ public class Board {
     }
 
     return board;
+  }
+
+  public List<Move> getAllPseudoLegalMoves(boolean white) {
+    List<Move> moves = new ArrayList<Move>();
+
+    return moves;
+  }
+
+  // Returns a List of pseudo-legal pawn moves, given a pawn was at the given index
+  public List<Move> getPseudoLegalPawnMoves(int index, int enPassentTargetIndex) {
+    List<Move> moves = new ArrayList<Move>();
+
+    int piece = this.getPiece(index);
+    boolean isWhite = (piece & 8) == 0;
+
+    // Square straight ahead is pseudo-legal, assuming no piece is there
+    // cannot go off edge of board as it would promote before then
+    if (this.getPiece(index + 8) == 0) {
+      moves.add(new Move(index, index + 8));
+    }
+
+    // Diagonal left and right are legal, assuming that pawn is not on left or right edge
+    // Any piece of left edge if index % 8 == 0, right edge if index+1 % 8 == 0
+    // TODO: Ensure captured piece is not own piece
+    if (index % 8 != 0 && (this.getPiece(index + 7) != 0 || index + 7 == enPassentTargetIndex)) {
+      moves.add(new Move(index, index + 7));
+    }
+    if ((index + 1) % 8 != 0 && (this.getPiece(index + 9) != 0 || index + 7 == enPassentTargetIndex)) {
+      moves.add(new Move(index, index + 9));
+    }
+
+    return moves;
   }
 }
