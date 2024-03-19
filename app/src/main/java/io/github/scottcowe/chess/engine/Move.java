@@ -51,7 +51,27 @@ public class Move {
     return this.from + " " + this.to;
   }
 
-  public boolean equals(Move move) {
+  @Override
+  public boolean equals(Object object) {
+    if (!(object instanceof Move)) {
+      return false;
+    }
+
+    Move move = (Move) object;
+
+    if (this.from != move.getFrom()) {
+      return false;
+    } 
+    else if (this.to != move.getTo()) {
+      return false;
+    }
+    else if (this.castling != move.getCastling()) {
+      return false;
+    }
+    else if (this.enPassent != move.isEnPassent()) {
+      return false;
+    }
+
     return true;
   }
 }
