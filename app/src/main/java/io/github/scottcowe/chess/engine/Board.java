@@ -96,6 +96,17 @@ public class Board {
     return board;
   }
 
+  public void doMove(Move move) {
+    // Check if move is legal
+    //  If king would be in check after move played then illegal
+   
+    // Move piece
+    //  If en passent then capture pawn
+    //  If castling then move king and rook
+
+    // Check if move causes checkmate or stalemate
+  }
+
   public List<Move> getAllPseudoLegalMoves(boolean white) {
     List<Move> moves = new ArrayList<Move>();
 
@@ -114,6 +125,8 @@ public class Board {
     if (this.getPiece(index + 8) == 0) {
       moves.add(new Move(index, index + 8));
     }
+
+    // If on starting row then two spaces ahead is legal, assuming squares are unoccupied
 
     // Diagonal left and right are legal, assuming that pawn is not on left or right edge
     // Any piece of left edge if index % 8 == 0, right edge if index+1 % 8 == 0
