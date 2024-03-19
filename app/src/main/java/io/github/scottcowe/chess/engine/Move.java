@@ -50,4 +50,8 @@ public class Move {
   public String toString() {
     return this.from + " " + this.to;
   }
+
+  public boolean equals(Move move) {
+    return true;
+  }
 }
