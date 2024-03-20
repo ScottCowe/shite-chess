@@ -1,5 +1,5 @@
 # Shite Chess
-This is going to be (hopefully) a shite (probably) chess engine and bot.
+This is going to (hopefully) be a shite (probably) chess engine and bot.
 
 ## Engine
 
