@@ -1,5 +1,5 @@
 package io.github.scottcowe.chess.engine;
 
-public class Move {
+public class Game {
 
 }
