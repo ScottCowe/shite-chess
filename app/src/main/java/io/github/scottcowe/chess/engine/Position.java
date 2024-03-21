@@ -48,4 +48,14 @@ public class Position {
   public int getFullmoveCounter() {
     return this.fullmoveCounter;
   }
+
+  public Position doMove(Move move) {
+    int[] newBoard = this.board;
+    int newCastlingRights = this.castlingRights;
+    int newEnPassentTargetIndex = this.enPassentTargetIndex;
+    int newHalfmoveClock = this.halfmoveClock;
+    int newFullmoveCounter = this.fullmoveCounter + (this.whitesMove ? 0 : 1);
+
+    return new Position(newBoard, !this.whitesMove, newCastlingRights, newEnPassentTarget, newHalfmoveClock, newFullmoveCounter);
+  }
 }
