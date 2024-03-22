@@ -21,6 +21,13 @@ public class Piece {
     this.numberMoves = numberMoves;
   }
 
+  public Piece() {
+    this.asInt = 0;
+    this.asChar = ' ';
+    this.moveOffsets = [];
+    this.numberMoves = 0;
+  }
+
   public int getAsInt() {
     return this.asInt;
   }

@@ -10,14 +10,14 @@ public class Move {
     this.toIndex = toIndex;
   }
 
-  public int[] applyToBoard(int[] board) {
-    int[] newBoard = board; 
+  public Piece[] applyToBoard(Piece[] board) {
+    Piece[] newBoard = board; 
 
-    int from = newBoard[this.fromIndex];
+    Piece from = newBoard[this.fromIndex];
 
     this.capture = newBoard[this.toIndex] != 0;
 
-    newBoard[fromIndex] = 0;
+    newBoard[fromIndex] = new Piece();
     newBoard[toIndex] = from;
 
     return newBoard;
