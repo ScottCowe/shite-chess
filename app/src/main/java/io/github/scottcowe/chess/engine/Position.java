@@ -56,6 +56,8 @@ public class Position {
     int newHalfmoveClock = this.halfmoveClock;
     int newFullmoveCounter = this.fullmoveCounter + (this.whitesMove ? 0 : 1);
 
+    newBoard = move.applyToBoard(newBoard);
+
     return new Position(newBoard, !this.whitesMove, newCastlingRights, newEnPassentTarget, newHalfmoveClock, newFullmoveCounter);
   }
 }

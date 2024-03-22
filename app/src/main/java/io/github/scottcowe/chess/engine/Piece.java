@@ -53,7 +53,14 @@ public class Piece {
   }
 
   public List<Integer> getPossibleMoveIndexesFromIndex(int index) {
-    return new ArrayList<Integer>();
+    List<Integer> indexes = new ArrayList<Integer>();
+
+    for (int i = 0; i < 8; i++) {
+      List<Integer> indexesForDir = this.getPossibleMoveIndexesFromIndexInDirection(index, i, this.numberMoves);
+      indexes.addAll(indexesForDir);
+    }
+
+    return indexes;
   }
 
   // Note: Does not account for pieces blocking the way
@@ -95,7 +102,7 @@ public class Piece {
   //  third bit is if second nibble in offset should be treated as negative - positive is 0
   //  negatives are applied before swap if first bit is set
   private int getIndexOfOffsetInDir(int offset, int direction) {
-    int firstNibble = offset & 240; // 1111 0000
+    int firstNibble = (offset & 240) >> 4; // 1111 0000
     int secondNibble = offset & 31; // 0000 1111
 
     // If second bit is set
@@ -116,7 +123,7 @@ public class Piece {
     }
    
     final int UP = 8;
-    final in RIGHT = 1;
+    final int RIGHT = 1;
 
     return firstNibble * UP + secondNibble * RIGHT;
   }
