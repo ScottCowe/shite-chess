@@ -21,6 +21,21 @@ public class Position {
     String[] splitFen = fen.split(" ");
 
     // Do board
+    String[] rows = splitFen[0].split("/");
+
+    int currentIndex = 0;
+
+    for (int i = rows.length(); i >= 0; i--) {
+      String currentRow = rows[i];
+
+      for (int j = 0; j < currentRow.length(); j++) {
+        // If current char is numeric
+        //  add numeric value to index
+        //
+        // Else 
+        //  set board[index] to piece with char
+      }
+    }
     
     this.whitesMove = splitFen[1] == "w";
     
@@ -42,7 +57,7 @@ public class Position {
       this.castlingRights += 1;
     }
 
-    // Algebraic notation to index - todo
+    this.enPassentIndex = this.getIndexFromAlgebraic(splitFen[3]);
 
     this.halfmoveClock = Integer.parseInt(splitFen[4]);
 
@@ -75,6 +90,25 @@ public class Position {
 
   public int getFullmoveCounter() {
     return this.fullmoveCounter;
+  }
+
+  public int getIndexFromAlgebraic(String algebraic) {
+    char firstChar = algebraic[0];
+    char secondChar = algebraic[1];
+
+    int rows = Character.getNumericValue(secondChar);
+    int cols = firstChar - 97;
+ 
+    return rows * 8 + cols;
+  }
+
+  public int getAlgebraicFromIndex(int index) {
+    int row = (int) (index / 8);
+    int col = index % 8 + 1;
+
+    char roww = row + 97;
+
+    return (String) (roww + col); 
   }
 
   public Position doMove(Move move) {
