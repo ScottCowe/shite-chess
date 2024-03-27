@@ -1,5 +1,8 @@
 package io.github.scottcowe.chess.engine;
 
+import java.util.List;
+import java.util.ArrayList;
+
 public class Position {
   private Piece[] board;
   private boolean whitesMove;
@@ -123,18 +126,23 @@ public class Position {
     return new Position(newBoard, !this.whitesMove, newCastlingRights, newEnPassentTarget, newHalfmoveClock, newFullmoveCounter);
   }
 
+  // Returns a list of legal moves for the player to move in the current position
+  public List<Move> getLegalMoves() {
+    List<Move> moves = new ArrayList<Move>();
+    return moves;
+  }
+
+  public List<Move> getPseudoLegalMoves() {
+    List<Move> moves = new ArrayList<Move>();
+    return moves;
+  }
+
   @Override
   public String toString() {
     String seperator = " + - + - + - + - + - + - + - + - + \n";
     String board = seperator;
     String[] rows = new String[8];
 
-    // For each index from end
-    //  if 8|(i+1) push \n to board
-    //  push "{piece} | " to board
-    //  if 8|i 
-    //    push " | "
-    //    push seperator
     int currentRow = 7;
     for (int i = 63; i >= 0; i--) {
       if ((i + 1) % 8 == 0) {
@@ -155,5 +163,18 @@ public class Position {
     }
 
     return board;
+  }
+
+  @Override
+  public boolean equals(Object object) {
+    if (!(object instanceof Position)) {
+      return false;
+    }
+
+    Position pos = (Position) object;
+
+    // Check if board, move, ... is same
+
+    return true;
   }
 }
