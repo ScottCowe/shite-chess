@@ -5,7 +5,7 @@ public class Move {
   private int toIndex;
   private boolean capture;
 
-  public Move(fromIndex, toIndex) {
+  public Move(int fromIndex, int toIndex) {
     this.fromIndex = fromIndex;
     this.toIndex = toIndex;
   }

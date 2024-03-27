@@ -11,19 +11,25 @@ public class Position {
   private int halfmoveClock;
   private int fullmoveCounter;
 
-  public Position(Piece[] board, boolean whitesMove, int castlingRights, int enPassentTargetIndex, int halfmoveClock, int fullmoveCounter) {
+  /*public Position(Piece[] board, boolean whitesMove, int castlingRights, int enPassentTargetIndex, int halfmoveClock, int fullmoveCounter) {
     this.board = board;
     this.whitesMove = whitesMove;
     this.castlingRights = castlingRights;
     this.enPassentTargetIndex = enPassentTargetIndex;
     this.halfmoveClock = halfmoveClock;
     this.fullmoveCounter = fullmoveCounter;
+  }*/
+
+  public Position() {
+    this("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
   }
 
   public Position(String fen) {
+    Arrays.fill(this.board, Piece.NONE); // Populates board with empty pieces
+
     String[] splitFen = fen.split(" ");
 
-    // Do board
+    // Parses board 
     String[] rows = splitFen[0].split("/");
 
     int currentIndex = 0;
@@ -32,31 +38,34 @@ public class Position {
       String currentRow = rows[i];
 
       for (int j = 0; j < currentRow.length(); j++) {
-        // If current char is numeric
-        //  add numeric value to index
-        //
-        // Else 
-        //  set board[index] to piece with char
-      }
+        char currentChar = currentRow.charAt(j);
+
+        if (Character.isDigit(currentChar)) {
+          currentIndex += (currentChar - '0'); // Adds currentChar as integer to currentIndex
+        }
+        else {
+          Piece piece = Piece.getFromChar(currentChar);
+          this.board[currentIndex] = piece;
+        }
     }
     
     this.whitesMove = splitFen[1] == "w";
     
     this.castlingRights = 0;
 
-    if (splitFen[2].contains("K") {
+    if (splitFen[2].contains("K")) {
       this.castlingRights += 8;
     }
 
-    if (splitFen[2].contains("Q") {
+    if (splitFen[2].contains("Q")) {
       this.castlingRights += 4;
     }
 
-    if (splitFen[2].contains("k") {
+    if (splitFen[2].contains("k")) {
       this.castlingRights += 2;
     }
 
-    if (splitFen[2].contains("q") {
+    if (splitFen[2].contains("q")) {
       this.castlingRights += 1;
     }
 
@@ -65,10 +74,6 @@ public class Position {
     this.halfmoveClock = Integer.parseInt(splitFen[4]);
 
     this.fullmoveCounter = Integer.parseInt(splitFen[5]);
-  }
-
-  public Position() {
-    this("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
   }
 
   public Piece getPieceAtIndex(int index) {
@@ -161,6 +166,13 @@ public class Position {
       board += rows[i];
       board += seperator;
     }
+
+    // Write additional info 
+    board += "\nWhites move: " + this.whitesMove;
+    board += "\nCastling rights: " + this.castlingRights;
+    board += "\nEn passent target: " + this.getAlgebraicFromIndex(this.enPassentTargetIndex);
+    board += "\nHalfmove clock: " + this.halfmoveClock;
+    board += "\nFullmove count: " + this.fullmoveCounter;
 
     return board;
   }
