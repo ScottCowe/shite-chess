@@ -17,7 +17,7 @@ public class Move {
 
     this.capture = newBoard[this.toIndex] != Piece.NONE;
 
-    newBoard[fromIndex] = new Piece();
+    newBoard[fromIndex] = Piece.NONE;
     newBoard[toIndex] = from;
 
     return newBoard;

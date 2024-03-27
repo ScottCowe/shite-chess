@@ -2,6 +2,7 @@ package io.github.scottcowe.chess.engine;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Position {
   private Piece[] board;
@@ -11,20 +12,17 @@ public class Position {
   private int halfmoveClock;
   private int fullmoveCounter;
 
-  /*public Position(Piece[] board, boolean whitesMove, int castlingRights, int enPassentTargetIndex, int halfmoveClock, int fullmoveCounter) {
+  public Position(Piece[] board, boolean whitesMove, int castlingRights, int enPassentTargetIndex, int halfmoveClock, int fullmoveCounter) {
     this.board = board;
     this.whitesMove = whitesMove;
     this.castlingRights = castlingRights;
     this.enPassentTargetIndex = enPassentTargetIndex;
     this.halfmoveClock = halfmoveClock;
     this.fullmoveCounter = fullmoveCounter;
-  }*/
-
-  public Position() {
-    this("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
   }
 
   public Position(String fen) {
+    this.board = new Piece[64];
     Arrays.fill(this.board, Piece.NONE); // Populates board with empty pieces
 
     String[] splitFen = fen.split(" ");
@@ -34,7 +32,7 @@ public class Position {
 
     int currentIndex = 0;
 
-    for (int i = rows.length(); i >= 0; i--) {
+    for (int i = rows.length - 1; i >= 0; i--) {
       String currentRow = rows[i];
 
       for (int j = 0; j < currentRow.length(); j++) {
@@ -46,11 +44,13 @@ public class Position {
         else {
           Piece piece = Piece.getFromChar(currentChar);
           this.board[currentIndex] = piece;
+          currentIndex += 1;
         }
+      }
     }
-    
-    this.whitesMove = splitFen[1] == "w";
-    
+
+    this.whitesMove = splitFen[1].equals("w");
+
     this.castlingRights = 0;
 
     if (splitFen[2].contains("K")) {
@@ -69,11 +69,15 @@ public class Position {
       this.castlingRights += 1;
     }
 
-    this.enPassentIndex = this.getIndexFromAlgebraic(splitFen[3]);
+    this.enPassentTargetIndex = this.getIndexFromAlgebraic(splitFen[3]);
 
     this.halfmoveClock = Integer.parseInt(splitFen[4]);
 
     this.fullmoveCounter = Integer.parseInt(splitFen[5]);
+  }
+
+  public Position() {
+    this("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
   }
 
   public Piece getPieceAtIndex(int index) {
@@ -101,22 +105,28 @@ public class Position {
   }
 
   public int getIndexFromAlgebraic(String algebraic) {
-    char firstChar = algebraic[0];
-    char secondChar = algebraic[1];
+    if (algebraic.length() != 2) {
+      return -1;
+    }
+
+    char firstChar = algebraic.charAt(0);
+    char secondChar = algebraic.charAt(1);
 
     int rows = Character.getNumericValue(secondChar);
     int cols = firstChar - 97;
- 
+
     return rows * 8 + cols;
   }
 
-  public int getAlgebraicFromIndex(int index) {
+  public String getAlgebraicFromIndex(int index) {
+    if (index == -1) {
+      return "-";
+    }
+
     int row = (int) (index / 8);
     int col = index % 8 + 1;
 
-    char roww = row + 97;
-
-    return (String) (roww + col); 
+    return Character.toString(row) + Character.toString(col); 
   }
 
   public Position doMove(Move move) {
@@ -128,7 +138,7 @@ public class Position {
 
     newBoard = move.applyToBoard(newBoard);
 
-    return new Position(newBoard, !this.whitesMove, newCastlingRights, newEnPassentTarget, newHalfmoveClock, newFullmoveCounter);
+    return new Position(newBoard, !this.whitesMove, newCastlingRights, newEnPassentTargetIndex, newHalfmoveClock, newFullmoveCounter);
   }
 
   // Returns a list of legal moves for the player to move in the current position

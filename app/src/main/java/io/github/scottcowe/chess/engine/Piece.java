@@ -82,47 +82,34 @@ public enum Piece {
     return ' ';
   }
 
-  public Piece getFromChar(char piece) {
+  public static Piece getFromChar(char piece) {
     switch(piece) {
-      case 'k':
-        return WHITE_KING;
-        break;
-      case 'q':
-        return WHITE_QUEEN;
-        break;
-      case 'r':
-        return WHITE_ROOK;
-        break;
-      case 'b':
-        return WHITE_BISHOP;
-        break;
-      case 'n':
-        return WHITE_KNIGHT;
-        break;
-      case 'p':
-        return WHITE_PAWN;
-        break;
       case 'K':
-        return BLACK_KING;
-        break;
+        return WHITE_KING;
       case 'Q':
-        return BLACK_QUEEN;
-        break;
+        return WHITE_QUEEN;
       case 'R':
-        return BLACK_ROOK;
-        break;
+        return WHITE_ROOK;
       case 'B':
-        return BLACK_BISHOP;
-        break;
+        return WHITE_BISHOP;
       case 'N':
-        return BLACK_KNIGHT;
-        break;
+        return WHITE_KNIGHT;
       case 'P':
+        return WHITE_PAWN;
+      case 'k':
+        return BLACK_KING;
+      case 'q':
+        return BLACK_QUEEN;
+      case 'r':
+        return BLACK_ROOK;
+      case 'b':
+        return BLACK_BISHOP;
+      case 'n':
+        return BLACK_KNIGHT;
+      case 'p':
         return BLACK_PAWN;
-        break;
       default:
         return NONE;
-        break;
     }
   }
 }
