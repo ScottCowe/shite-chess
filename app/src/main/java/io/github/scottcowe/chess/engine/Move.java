@@ -75,6 +75,8 @@ public class Move {
 
   @Override
   public String toString() {
-    return fromIndex + " " + toIndex;
+    String fromAlgebraic = Position.getAlgebraicFromIndex(this.fromIndex);
+    String toAlgebraic = Position.getAlgebraicFromIndex(this.toIndex);
+    return fromAlgebraic + " " + toAlgebraic;
   }
 }

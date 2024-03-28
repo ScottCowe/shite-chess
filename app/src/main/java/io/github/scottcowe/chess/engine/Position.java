@@ -104,7 +104,7 @@ public class Position {
     return this.fullmoveCounter;
   }
 
-  public int getIndexFromAlgebraic(String algebraic) {
+  public static int getIndexFromAlgebraic(String algebraic) {
     if (algebraic.length() != 2) {
       return -1;
     }
@@ -118,15 +118,27 @@ public class Position {
     return rows * 8 + cols;
   }
 
-  public String getAlgebraicFromIndex(int index) {
+  public static String getAlgebraicFromIndex(int index) {
     if (index == -1) {
       return "-";
     }
 
-    int row = (int) (index / 8);
-    int col = index % 8 + 1;
+    int row = index % 8;
+    int col = (int) (index / 8);
 
-    return Character.toString(row) + Character.toString(col); 
+    return Character.toString(row + 'a') + Character.toString(col + '1'); 
+  }
+
+  public List<Integer> getPieceIndexesOfType(Piece piece) {
+    List<Integer> indexes = new ArrayList<Integer>();
+
+    for (int i = 0; i < 64; i++) {
+      if (this.board[i].equals(piece)) {
+        indexes.add(i);
+      }
+    }
+
+    return indexes;
   }
 
   public Position doMove(Move move) {
@@ -138,21 +150,62 @@ public class Position {
 
     newBoard = move.applyToBoard(newBoard);
 
+    // TODO: Apply changes to info such as en passent target
+
     return new Position(newBoard, !this.whitesMove, newCastlingRights, newEnPassentTargetIndex, newHalfmoveClock, newFullmoveCounter);
   }
 
-  // Returns a list of legal moves for the player to move in the current position
-  public List<Move> getLegalMoves() {
-    List<Move> moves = new ArrayList<Move>();
+  public List<Move> removeIllegalMoves(List<Move> pseudoLegalMoves) {
+    List<Move> moves = pseudoLegalMoves;
     return moves;
   }
 
-  public List<Move> getPseudoLegalMoves() {
+  public List<Move> getAllPseudoLegalMoves() {
     List<Move> moves = new ArrayList<Move>();
+
+    for (Piece pieceType : Piece.values()) {
+      if (pieceType != Piece.NONE && pieceType.isWhite() == this.whitesMove) {
+        List<Integer> indexes = this.getPieceIndexesOfType(pieceType);
+        for (Integer index : indexes) {
+          moves.addAll(this.getPseudoLegalMovesForPiece(index));
+        }
+      }
+    }
+
     return moves;
   }
 
-  public List<Move> getPawnMoves(int index, boolean isWhite) {
+  public List<Move> getPseudoLegalMovesForPiece(int index) {
+    List<Move> moves = new ArrayList<Move>();
+
+    Piece.Type type = this.board[index].getType();
+    boolean isWhite = this.getPieceAtIndex(index).isWhite();
+
+    switch(type) {
+      case Piece.Type.KING:
+        
+        break;
+      case Piece.Type.QUEEN:
+        
+        break;
+      case Piece.Type.ROOK:
+        
+        break;
+      case Piece.Type.BISHOP:
+        
+        break;
+      case Piece.Type.KNIGHT:
+        
+        break;
+      case Piece.Type.PAWN:
+        moves = this.getPawnMoves(index, isWhite); 
+        break;
+    }
+
+    return moves;
+  }
+
+  private List<Move> getPawnMoves(int index, boolean isWhite) {
     List<Move> moves = new ArrayList<Move>();
 
     int direction = isWhite ? 8 : -8;

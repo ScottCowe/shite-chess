@@ -9,7 +9,7 @@ public class Main {
     Position pos = new Position();
     System.out.println(pos);
 
-    List<Move> moves = pos.getPawnMoves(9, true);
+    List<Move> moves = pos.getAllPseudoLegalMoves(); 
 
     for (Move move : moves) {
       System.out.println(move);

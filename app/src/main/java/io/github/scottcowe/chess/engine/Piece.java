@@ -9,11 +9,21 @@ public enum Piece {
     public char getAsChar() {
       return 'K';
     }
+
+    @Override
+    public Type getType() {
+      return Type.KING;
+    }
   },
   WHITE_QUEEN {
     @Override
     public char getAsChar() {
       return 'Q';
+    }
+
+    @Override
+    public Type getType() {
+      return Type.QUEEN;
     }
   },
   WHITE_ROOK {
@@ -21,11 +31,21 @@ public enum Piece {
     public char getAsChar() {
       return 'R';
     }
+
+    @Override
+    public Type getType() {
+      return Type.ROOK;
+    }
   },
   WHITE_BISHOP {
     @Override
     public char getAsChar() {
       return 'B';
+    }
+
+    @Override
+    public Type getType() {
+      return Type.BISHOP;
     }
   },
   WHITE_KNIGHT {
@@ -33,11 +53,21 @@ public enum Piece {
     public char getAsChar() {
       return 'N';
     }
+
+    @Override
+    public Type getType() {
+      return Type.KNIGHT;
+    }
   },
   WHITE_PAWN {
     @Override
     public char getAsChar() {
       return 'P';
+    }
+
+    @Override
+    public Type getType() {
+      return Type.PAWN;
     }
   },
   BLACK_KING {
@@ -45,11 +75,21 @@ public enum Piece {
     public char getAsChar() {
       return 'k';
     }
+
+    @Override
+    public Type getType() {
+      return Type.KING;
+    }
   },
   BLACK_QUEEN {
     @Override
     public char getAsChar() {
       return 'q';
+    }
+
+    @Override
+    public Type getType() {
+      return Type.QUEEN;
     }
   },
   BLACK_ROOK {
@@ -57,11 +97,21 @@ public enum Piece {
     public char getAsChar() {
       return 'r';
     }
+
+    @Override
+    public Type getType() {
+      return Type.ROOK;
+    }
   },
   BLACK_BISHOP {
     @Override
     public char getAsChar() {
       return 'b';
+    }
+
+    @Override
+    public Type getType() {
+      return Type.BISHOP;
     }
   },
   BLACK_KNIGHT {
@@ -69,17 +119,41 @@ public enum Piece {
     public char getAsChar() {
       return 'n';
     }
+
+    @Override
+    public Type getType() {
+      return Type.KNIGHT;
+    }
   },
   BLACK_PAWN {
     @Override
     public char getAsChar() {
       return 'p';
     }
+
+    @Override
+    public Type getType() {
+      return Type.PAWN;
+    }
   },
   NONE;
 
+  enum Type {
+    KING,
+    QUEEN,
+    ROOK,
+    BISHOP,
+    KNIGHT,
+    PAWN,
+    NONE;
+  }
+
   public char getAsChar() {
     return ' ';
+  }
+
+  public Type getType() {
+    return Type.NONE;
   }
 
   public boolean isWhite() {
