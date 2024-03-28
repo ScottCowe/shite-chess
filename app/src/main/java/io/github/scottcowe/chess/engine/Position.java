@@ -31,7 +31,6 @@ public class Position {
     String[] rows = splitFen[0].split("/");
 
     int currentIndex = 0;
-
     for (int i = rows.length - 1; i >= 0; i--) {
       String currentRow = rows[i];
 
@@ -128,10 +127,10 @@ public class Position {
       return "-";
     }
 
-    int row = index % 8;
-    int col = (int) (index / 8);
+    int row = (int) (index / 8);
+    int col = index % 8;
 
-    return Character.toString(row + 'a') + Character.toString(col + '1'); 
+    return Character.toString(col + 'a') + Character.toString(row + '1'); 
   }
 
   public List<Integer> getPieceIndexesOfType(Piece piece) {
@@ -194,13 +193,13 @@ public class Position {
         moves = this.getQueenMoves(index, isWhite); 
         break;
       case Piece.Type.ROOK:
-        
+        moves = this.getRookMoves(index, isWhite); 
         break;
       case Piece.Type.BISHOP:
-        
+        moves = this.getBishopMoves(index, isWhite); 
         break;
       case Piece.Type.KNIGHT:
-        
+        moves = this.getKnightMoves(index, isWhite); 
         break;
       case Piece.Type.PAWN:
         moves = this.getPawnMoves(index, isWhite); 
@@ -210,6 +209,7 @@ public class Position {
     return moves;
   }
 
+  // TODO: Implement castling
   public List<Move> getKingMoves(int index, boolean isWhite) {
     List<Move> moves = new ArrayList<Move>();
 
@@ -315,6 +315,37 @@ public class Position {
           moveIndex = -1;
         }
       }
+    }
+
+    return moves;
+  }
+
+  public List<Move> getKnightMoves(int index, boolean isWhite) {
+    List<Move> moves = new ArrayList<Move>();
+
+    int[] offsets = { 10, -6, 6, -10, 15, 17, -15, -17 };
+
+    for (int i = 0; i < 8; i++) {
+      int newIndex = index + offsets[i];
+
+      if (newIndex > 63 || newIndex < 0) {
+        continue;
+      }
+
+      // if difference in rank between index and newIndex is not 2 and diff in col not 2
+      int fromRank = index % 8;
+      int toRank = newIndex % 8;
+      int rankDiff = Math.abs(fromRank - toRank);
+
+      if (rankDiff > 2) {
+        continue; 
+      }
+
+      if (this.board[newIndex].isWhite() == isWhite) {
+        continue;
+      }
+
+      moves.add(new Move(index, newIndex));
     }
 
     return moves;
