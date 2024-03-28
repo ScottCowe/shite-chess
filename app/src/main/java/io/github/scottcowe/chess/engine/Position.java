@@ -152,8 +152,42 @@ public class Position {
     return moves;
   }
 
+  public List<Move> getPawnMoves(int index, boolean isWhite) {
+    List<Move> moves = new ArrayList<Move>();
+
+    int direction = isWhite ? 8 : -8;
+
+    if (this.board[index + direction].equals(Piece.NONE)) {
+      moves.add(new Move(index, index + direction));
+    }
+
+    int startingRank = isWhite ? 1 : 6;
+
+    boolean onStartingRank = (index - startingRank * 8) >= 0 && (index - startingRank * 8) <= 7;
+
+    if (onStartingRank && this.board[index + 2 * direction].equals(Piece.NONE)) {
+      moves.add(new Move(index, index + 2 * direction));
+    }
+
+    // if direction pm 1 contains enemy piece then that is legal move
+    if (this.board[index + direction + 1].isWhite() != isWhite && !this.board[index + direction + 1].equals(Piece.NONE)) {
+      moves.add(new Move(index, index + direction + 1));
+    }
+
+    if (this.board[index + direction - 1].isWhite() != isWhite && !this.board[index + direction - 1].equals(Piece.NONE)) {
+      moves.add(new Move(index, index + direction - 1));
+    }
+
+    // if en passent target is set and pawn is in position then that is a legal move
+    if (this.enPassentTargetIndex == index + direction + 1 || this.enPassentTargetIndex == index + direction - 1) {
+      moves.add(new Move(index, this.enPassentTargetIndex, true));
+    }
+
+    return moves;
+  }
+
   // Direction - 0 for towards 8th, 1 for towards h, 2 for towards 1st, 3 for towards a
-  public Move getStraightMoveInDirection(int index, int direction) {
+  private Move getStraightMoveInDirection(int index, int direction) {
     int newIndex = index;
 
     switch(direction) {
@@ -187,7 +221,7 @@ public class Position {
   }
 
   // Direction - 0 for towards h8, 1 for towards h1, 2 for towards a1, 3 for towards a8 
-  public Move getDiagonalMoveInDirection(int index, int direction) {
+  private Move getDiagonalMoveInDirection(int index, int direction) {
     int newIndex = index;
 
     switch(direction) {

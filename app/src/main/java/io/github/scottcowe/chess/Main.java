@@ -8,5 +8,11 @@ public class Main {
   public static void main(String[] args) {
     Position pos = new Position();
     System.out.println(pos);
+
+    List<Move> moves = pos.getPawnMoves(9, true);
+
+    for (Move move : moves) {
+      System.out.println(move);
+    }
   }
 }

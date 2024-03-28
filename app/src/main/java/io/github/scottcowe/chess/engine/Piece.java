@@ -82,6 +82,10 @@ public enum Piece {
     return ' ';
   }
 
+  public boolean isWhite() {
+    return Character.isUpperCase(this.getAsChar());
+  }
+
   public static Piece getFromChar(char piece) {
     switch(piece) {
       case 'K':
