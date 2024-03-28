@@ -209,12 +209,38 @@ public class Position {
     return moves;
   }
 
-  // TODO: Implement castling
+  // TODO: Clean up code
   public List<Move> getKingMoves(int index, boolean isWhite) {
     List<Move> moves = new ArrayList<Move>();
 
+    boolean whiteKingside = (this.castlingRights & 8) == 8;
+    boolean whiteQueenside = (this.castlingRights & 4) == 4;
+    boolean blackKingside = (this.castlingRights & 2) == 2;
+    boolean blackQueenside = (this.castlingRights & 1) == 1;
+
+    if (this.board[5].equals(Piece.NONE) && this.board[6].equals(Piece.NONE) && whiteKingside && isWhite) {
+      moves.add(new Move(8)); 
+    }
+
+    if (this.board[3].equals(Piece.NONE) && this.board[2].equals(Piece.NONE) && this.board[1].equals(Piece.NONE) && whiteQueenside && isWhite) {
+      moves.add(new Move(4));
+    }
+
+    if (this.board[61].equals(Piece.NONE) && this.board[62].equals(Piece.NONE) && blackKingside && !isWhite) {
+      moves.add(new Move(2)); 
+    }
+
+    if (this.board[59].equals(Piece.NONE) && this.board[58].equals(Piece.NONE) && this.board[57].equals(Piece.NONE) && blackQueenside && !isWhite) {
+      moves.add(new Move(1));
+    }
+
     for (int i = 0; i < 4; i++) {
       int moveIndex = this.getStraightMoveIndexInDirection(index, i);
+
+      if (moveIndex == -1) {
+        continue;
+      }
+
       Piece pieceAtIndex = this.board[moveIndex];
       
       if (pieceAtIndex.equals(Piece.NONE) || pieceAtIndex.isWhite() != isWhite) {
@@ -222,6 +248,11 @@ public class Position {
       }
 
       moveIndex = this.getDiagonalMoveIndexInDirection(index, i);
+
+      if (moveIndex == -1) {
+        continue;
+      }
+
       pieceAtIndex = this.board[moveIndex];
       
       if (pieceAtIndex.equals(Piece.NONE) || pieceAtIndex.isWhite() != isWhite) {
