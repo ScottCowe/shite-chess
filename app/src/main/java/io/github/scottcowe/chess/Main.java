@@ -6,13 +6,13 @@ import io.github.scottcowe.chess.engine.*;
 
 public class Main {
   public static void main(String[] args) {
-    Position pos = new Position("8/8/8/8/8/8/8/4K2R w Kkq - 0 1");
+    Position pos = new Position();
     System.out.println(pos);
 
-    List<Move> moves = pos.getAllPseudoLegalMoves(); 
+    pos = pos.doMove(new Move(12, 28));
+    System.out.println(pos);
 
-    for (Move move : moves) {
-      System.out.println(move); 
-    }
+    pos = pos.doMove(new Move(50, 34));
+    System.out.println(pos);
   }
 }

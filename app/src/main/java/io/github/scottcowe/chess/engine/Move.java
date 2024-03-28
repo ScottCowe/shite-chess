@@ -1,5 +1,6 @@
 package io.github.scottcowe.chess.engine;
 
+// TODO: Clean up this class, figure out way to reimplement so it is nicer
 public class Move {
   private int fromIndex;
   private int toIndex;
@@ -7,6 +8,8 @@ public class Move {
   private boolean enPassent;
   private Piece toPromoteTo = Piece.NONE;
   private int castling = 0; // 0 if none, 1 if black queenside, 2 if black kingside, 4 if white queenside, 8 if white kingside
+  private int enPassentTargetIndex = -1;
+  private boolean halfmoveReset = false;
 
   public Move(int fromIndex, int toIndex) {
     this.fromIndex = fromIndex;
@@ -84,7 +87,16 @@ public class Move {
       return newBoard;
     }
 
+    if (from.getType().equals(Piece.Type.PAWN) && Math.abs(this.fromIndex - this.toIndex) == 16) {
+      int offset = from.equals(Piece.WHITE_PAWN) ? 8 : -8;
+      this.enPassentTargetIndex = this.fromIndex + offset;
+    }
+
     this.capture = newBoard[this.toIndex] != Piece.NONE;
+
+    if (from.getType().equals(Piece.Type.PAWN) || this.capture) {
+      this.halfmoveReset = true;
+    }
 
     newBoard[fromIndex] = Piece.NONE;
     newBoard[toIndex] = from;
@@ -94,6 +106,18 @@ public class Move {
 
   public boolean isCapture() {
     return this.capture;
+  }
+
+  public int getCastling() {
+    return this.castling;
+  }
+
+  public int getEnPassentTargetIndex() {
+    return this.enPassentTargetIndex;
+  }
+
+  public boolean shouldHalfmoveReset() {
+    return this.halfmoveReset;
   }
 
   @Override

@@ -146,15 +146,11 @@ public class Position {
   }
 
   public Position doMove(Move move) {
-    Piece[] newBoard = this.board;
-    int newCastlingRights = this.castlingRights;
-    int newEnPassentTargetIndex = this.enPassentTargetIndex;
-    int newHalfmoveClock = this.halfmoveClock;
+    Piece[] newBoard = move.applyToBoard(this.board);
+    int newCastlingRights = this.castlingRights & ~move.getCastling();
+    int newEnPassentTargetIndex = move.getEnPassentTargetIndex();
+    int newHalfmoveClock = move.shouldHalfmoveReset() ? 0 : this.halfmoveClock + 1;
     int newFullmoveCounter = this.fullmoveCounter + (this.whitesMove ? 0 : 1);
-
-    newBoard = move.applyToBoard(newBoard);
-
-    // TODO: Apply changes to info such as en passent target
 
     return new Position(newBoard, !this.whitesMove, newCastlingRights, newEnPassentTargetIndex, newHalfmoveClock, newFullmoveCounter);
   }
