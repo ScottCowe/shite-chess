@@ -84,6 +84,11 @@ public class Position {
     return this.board[index];
   }
 
+  // For testing purposes
+  public void setPieceAtIndex(int index, Piece piece) {
+    this.board[index] = piece;
+  }
+
   public boolean isWhitesMove() {
     return this.whitesMove;
   }
@@ -186,7 +191,7 @@ public class Position {
         moves = this.getKingMoves(index, isWhite); 
         break;
       case Piece.Type.QUEEN:
-        
+        moves = this.getQueenMoves(index, isWhite); 
         break;
       case Piece.Type.ROOK:
         
@@ -209,18 +214,52 @@ public class Position {
     List<Move> moves = new ArrayList<Move>();
 
     for (int i = 0; i < 4; i++) {
-      int straightMoveIndex = this.getStraightMoveIndexInDirection(index, i);
-      Piece pieceAtIndex = this.board[straightMoveIndex];
+      int moveIndex = this.getStraightMoveIndexInDirection(index, i);
+      Piece pieceAtIndex = this.board[moveIndex];
       
       if (pieceAtIndex.equals(Piece.NONE) || pieceAtIndex.isWhite() != isWhite) {
-        moves.add(new Move(index, straightMoveIndex));
+        moves.add(new Move(index, moveIndex));
       }
 
-      int diagonalMoveIndex = this.getDiagonalMoveIndexInDirection(index, i);
-      pieceAtIndex = this.board[diagonalMoveIndex];
+      moveIndex = this.getDiagonalMoveIndexInDirection(index, i);
+      pieceAtIndex = this.board[moveIndex];
       
       if (pieceAtIndex.equals(Piece.NONE) || pieceAtIndex.isWhite() != isWhite) {
-        moves.add(new Move(index, diagonalMoveIndex));
+        moves.add(new Move(index, moveIndex));
+      }
+    }
+
+    return moves;
+  }
+
+  public List<Move> getQueenMoves(int index, boolean isWhite) {
+    List<Move> moves = new ArrayList<Move>();
+    
+    for (int i = 0; i < 4; i++) {
+      int moveIndex = this.getStraightMoveIndexInDirection(index, i);
+
+      while (moveIndex != -1) {
+        if (this.board[moveIndex].equals(Piece.NONE)) {
+          moves.add(new Move(index, moveIndex));
+          moveIndex = this.getStraightMoveIndexInDirection(moveIndex, i);
+        }
+        else if (this.board[moveIndex].isWhite() != isWhite) {
+          moves.add(new Move(index, moveIndex));
+          moveIndex = -1;
+        }
+      }
+
+      moveIndex = this.getDiagonalMoveIndexInDirection(index, i);
+
+      while (moveIndex != -1) {
+        if (this.board[moveIndex].equals(Piece.NONE)) {
+          moves.add(new Move(index, moveIndex));
+          moveIndex = this.getDiagonalMoveIndexInDirection(moveIndex, i);
+        }
+        else if (this.board[moveIndex].isWhite() != isWhite) {
+          moves.add(new Move(index, moveIndex));
+          moveIndex = -1;
+        }
       }
     }
 
@@ -281,15 +320,15 @@ public class Position {
     }
     
     if (newIndex < 0 || newIndex > 63) {
-      return index; // Returning input index is treated as error
+      return -1; 
     }
 
     if ((index + 1) % 8 == 0 && newIndex % 8 == 0) {
-      return index;
+      return -1;
     }
 
     if (index % 8 == 0 && (newIndex + 1) % 8 == 0) {
-      return index;
+      return -1;
     }
 
     return newIndex;
@@ -315,15 +354,15 @@ public class Position {
     }
     
     if (newIndex < 0 || newIndex > 63) {
-      return index; // Returning input index is treated as error
+      return -1;
     }
 
     if ((index + 1) % 8 == 0 && newIndex % 8 == 0) {
-      return index;
+      return -1;
     }
 
     if (index % 8 == 0 && (newIndex + 1) % 8 == 0) {
-      return index;
+      return -1;
     }
 
     return newIndex;

@@ -27,6 +27,11 @@ public class Move {
     this.castling = castling; 
   }
 
+  // For testing
+  public int getToIndex() {
+    return this.toIndex;
+  }
+
   public Piece[] applyToBoard(Piece[] board) {
     // TODO: Exception for castling
 
