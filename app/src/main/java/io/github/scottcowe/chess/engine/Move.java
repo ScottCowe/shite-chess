@@ -26,4 +26,9 @@ public class Move {
   public boolean isCapture() {
     return this.capture;
   }
+
+  @Override
+  public String toString() {
+    return fromIndex + " " + toIndex;
+  }
 }

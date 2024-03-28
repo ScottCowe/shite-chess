@@ -152,6 +152,74 @@ public class Position {
     return moves;
   }
 
+  // Direction - 0 for towards 8th, 1 for towards h, 2 for towards 1st, 3 for towards a
+  public Move getStraightMoveInDirection(int index, int direction) {
+    int newIndex = index;
+
+    switch(direction) {
+      case 0:
+        newIndex += 8;
+        break;
+      case 1:
+        newIndex += 1;
+        break;
+      case 2:
+        newIndex -= 8;
+        break;
+      case 3:
+        newIndex -= 1;
+        break;
+    }
+    
+    if (newIndex < 0 || newIndex > 63) {
+      return new Move(index, index); // Moving to current square is an error move
+    }
+
+    if ((index + 1) % 8 == 0 && newIndex % 8 == 0) {
+      return new Move(index, index);
+    }
+
+    if (index % 8 == 0 && (newIndex + 1) % 8 == 0) {
+      return new Move(index, index);
+    }
+
+    return new Move(index, newIndex);
+  }
+
+  // Direction - 0 for towards h8, 1 for towards h1, 2 for towards a1, 3 for towards a8 
+  public Move getDiagonalMoveInDirection(int index, int direction) {
+    int newIndex = index;
+
+    switch(direction) {
+      case 0:
+        newIndex += 9;
+        break;
+      case 1:
+        newIndex -= 9;
+        break;
+      case 2:
+        newIndex -= 7;
+        break;
+      case 3:
+        newIndex += 7;
+        break;
+    }
+    
+    if (newIndex < 0 || newIndex > 63) {
+      return new Move(index, index); // Moving to current square is an error move
+    }
+
+    if ((index + 1) % 8 == 0 && newIndex % 8 == 0) {
+      return new Move(index, index);
+    }
+
+    if (index % 8 == 0 && (newIndex + 1) % 8 == 0) {
+      return new Move(index, index);
+    }
+
+    return new Move(index, newIndex);
+  }
+
   @Override
   public String toString() {
     String seperator = " + - + - + - + - + - + - + - + - + \n";
