@@ -183,7 +183,7 @@ public class Position {
 
     switch(type) {
       case Piece.Type.KING:
-        
+        moves = this.getKingMoves(index, isWhite); 
         break;
       case Piece.Type.QUEEN:
         
@@ -205,7 +205,29 @@ public class Position {
     return moves;
   }
 
-  private List<Move> getPawnMoves(int index, boolean isWhite) {
+  public List<Move> getKingMoves(int index, boolean isWhite) {
+    List<Move> moves = new ArrayList<Move>();
+
+    for (int i = 0; i < 4; i++) {
+      int straightMoveIndex = this.getStraightMoveIndexInDirection(index, i);
+      Piece pieceAtIndex = this.board[straightMoveIndex];
+      
+      if (pieceAtIndex.equals(Piece.NONE) || pieceAtIndex.isWhite() != isWhite) {
+        moves.add(new Move(index, straightMoveIndex));
+      }
+
+      int diagonalMoveIndex = this.getDiagonalMoveIndexInDirection(index, i);
+      pieceAtIndex = this.board[diagonalMoveIndex];
+      
+      if (pieceAtIndex.equals(Piece.NONE) || pieceAtIndex.isWhite() != isWhite) {
+        moves.add(new Move(index, diagonalMoveIndex));
+      }
+    }
+
+    return moves;
+  }
+
+  public List<Move> getPawnMoves(int index, boolean isWhite) {
     List<Move> moves = new ArrayList<Move>();
 
     int direction = isWhite ? 8 : -8;
@@ -218,7 +240,7 @@ public class Position {
 
     boolean onStartingRank = (index - startingRank * 8) >= 0 && (index - startingRank * 8) <= 7;
 
-    if (onStartingRank && this.board[index + 2 * direction].equals(Piece.NONE)) {
+    if (onStartingRank && this.board[index + 2 * direction].equals(Piece.NONE) && this.board[index + direction].equals(Piece.NONE)) {
       moves.add(new Move(index, index + 2 * direction));
     }
 
@@ -240,7 +262,7 @@ public class Position {
   }
 
   // Direction - 0 for towards 8th, 1 for towards h, 2 for towards 1st, 3 for towards a
-  private Move getStraightMoveInDirection(int index, int direction) {
+  private int getStraightMoveIndexInDirection(int index, int direction) {
     int newIndex = index;
 
     switch(direction) {
@@ -259,22 +281,22 @@ public class Position {
     }
     
     if (newIndex < 0 || newIndex > 63) {
-      return new Move(index, index); // Moving to current square is an error move
+      return index; // Returning input index is treated as error
     }
 
     if ((index + 1) % 8 == 0 && newIndex % 8 == 0) {
-      return new Move(index, index);
+      return index;
     }
 
     if (index % 8 == 0 && (newIndex + 1) % 8 == 0) {
-      return new Move(index, index);
+      return index;
     }
 
-    return new Move(index, newIndex);
+    return newIndex;
   }
 
   // Direction - 0 for towards h8, 1 for towards h1, 2 for towards a1, 3 for towards a8 
-  private Move getDiagonalMoveInDirection(int index, int direction) {
+  private int getDiagonalMoveIndexInDirection(int index, int direction) {
     int newIndex = index;
 
     switch(direction) {
@@ -293,18 +315,18 @@ public class Position {
     }
     
     if (newIndex < 0 || newIndex > 63) {
-      return new Move(index, index); // Moving to current square is an error move
+      return index; // Returning input index is treated as error
     }
 
     if ((index + 1) % 8 == 0 && newIndex % 8 == 0) {
-      return new Move(index, index);
+      return index;
     }
 
     if (index % 8 == 0 && (newIndex + 1) % 8 == 0) {
-      return new Move(index, index);
+      return index;
     }
 
-    return new Move(index, newIndex);
+    return newIndex;
   }
 
   @Override

@@ -3,6 +3,8 @@ package io.github.scottcowe.chess.engine;
 import java.util.List;
 import java.util.ArrayList;
 
+// I really hate this
+// TODO: Find nicer way to do this
 public enum Piece {
   WHITE_KING {
     @Override
