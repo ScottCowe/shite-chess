@@ -155,7 +155,7 @@ public class Position {
     return new Position(newBoard, !this.whitesMove, newCastlingRights, newEnPassentTargetIndex, newHalfmoveClock, newFullmoveCounter);
   }
 
-  public List<Move> removeIllegalMoves(List<Move> pseudoLegalMoves) {
+  public static List<Move> removeIllegalMoves(List<Move> pseudoLegalMoves) {
     List<Move> moves = pseudoLegalMoves;
     return moves;
   }

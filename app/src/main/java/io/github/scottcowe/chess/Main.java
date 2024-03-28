@@ -9,10 +9,18 @@ public class Main {
     Position pos = new Position();
     System.out.println(pos);
 
-    pos = pos.doMove(new Move(12, 28));
-    System.out.println(pos);
+    List<Move> moves = pos.getAllPseudoLegalMoves();
+    moves = Position.removeIllegalMoves(moves);
 
-    pos = pos.doMove(new Move(50, 34));
+    Move move = new Move(12, 28);
+
+    for (Move m : moves) {
+      if (m.equals(move)) {
+        pos = pos.doMove(move);
+        break;
+      }
+    }
+
     System.out.println(pos);
   }
 }

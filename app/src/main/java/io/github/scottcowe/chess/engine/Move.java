@@ -30,9 +30,36 @@ public class Move {
     this.castling = castling; 
   }
 
-  // For testing
+  public int getFromIndex() {
+    return this.fromIndex;
+  }
+
   public int getToIndex() {
     return this.toIndex;
+  }
+
+  public boolean isCapture() {
+    return this.capture;
+  }
+
+  public boolean isEnPassent() {
+    return this.enPassent;
+  }
+
+  public Piece getPieceToPromoteTo() {
+    return this.toPromoteTo;
+  }
+
+  public int getCastling() {
+    return this.castling;
+  }
+
+  public int getEnPassentTargetIndex() {
+    return this.enPassentTargetIndex;
+  }
+
+  public boolean shouldHalfmoveReset() {
+    return this.halfmoveReset;
   }
 
   public Piece[] applyToBoard(Piece[] board) {
@@ -104,20 +131,47 @@ public class Move {
     return newBoard;
   }
 
-  public boolean isCapture() {
-    return this.capture;
-  }
+  @Override
+  public boolean equals(Object object) {
+    if (!(object instanceof Move)) {
+      return false;
+    }
 
-  public int getCastling() {
-    return this.castling;
-  }
+    Move move = (Move) object;
 
-  public int getEnPassentTargetIndex() {
-    return this.enPassentTargetIndex;
-  }
+    if (move.getFromIndex() != this.fromIndex) {
+      return false;
+    }
 
-  public boolean shouldHalfmoveReset() {
-    return this.halfmoveReset;
+    if (move.getToIndex() != this.toIndex) {
+      return false;
+    }
+
+    if (move.isCapture() != this.capture) {
+      return false;
+    }
+
+    if (move.isEnPassent() != this.enPassent) {
+      return false;
+    }
+
+    if (move.getPieceToPromoteTo() != this.toPromoteTo) {
+      return false;
+    }
+
+    if (move.getCastling() != this.castling) {
+      return false;
+    }
+
+    if (move.getEnPassentTargetIndex() != this.enPassentTargetIndex) {
+      return false;
+    }
+
+    if (move.shouldHalfmoveReset() != this.halfmoveReset) {
+      return false;
+    }
+
+    return true;
   }
 
   @Override
