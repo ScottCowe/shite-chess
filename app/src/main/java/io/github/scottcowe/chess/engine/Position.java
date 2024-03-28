@@ -247,6 +247,9 @@ public class Position {
           moves.add(new Move(index, moveIndex));
           moveIndex = -1;
         }
+        else {
+          moveIndex = -1;
+        }
       }
 
       moveIndex = this.getDiagonalMoveIndexInDirection(index, i);
@@ -258,6 +261,57 @@ public class Position {
         }
         else if (this.board[moveIndex].isWhite() != isWhite) {
           moves.add(new Move(index, moveIndex));
+          moveIndex = -1;
+        }
+        else {
+          moveIndex = -1;
+        }
+      }
+    }
+
+    return moves;
+  }
+
+  public List<Move> getRookMoves(int index, boolean isWhite) {
+    List<Move> moves = new ArrayList<Move>();
+    
+    for (int i = 0; i < 4; i++) {
+      int moveIndex = this.getStraightMoveIndexInDirection(index, i);
+
+      while (moveIndex != -1) {
+        if (this.board[moveIndex].equals(Piece.NONE)) {
+          moves.add(new Move(index, moveIndex));
+          moveIndex = this.getStraightMoveIndexInDirection(moveIndex, i);
+        }
+        else if (this.board[moveIndex].isWhite() != isWhite) {
+          moves.add(new Move(index, moveIndex));
+          moveIndex = -1;
+        }
+        else {
+          moveIndex = -1;
+        }
+      }
+    }
+
+    return moves;
+  }
+
+  public List<Move> getBishopMoves(int index, boolean isWhite) {
+    List<Move> moves = new ArrayList<Move>();
+    
+    for (int i = 0; i < 4; i++) {
+      int moveIndex = this.getDiagonalMoveIndexInDirection(index, i);
+
+      while (moveIndex != -1) {
+        if (this.board[moveIndex].equals(Piece.NONE)) {
+          moves.add(new Move(index, moveIndex));
+          moveIndex = this.getDiagonalMoveIndexInDirection(moveIndex, i);
+        }
+        else if (this.board[moveIndex].isWhite() != isWhite) {
+          moves.add(new Move(index, moveIndex));
+          moveIndex = -1;
+        }
+        else {
           moveIndex = -1;
         }
       }
