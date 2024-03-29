@@ -184,22 +184,22 @@ public class Position {
 
     switch(type) {
       case Piece.Type.KING:
-        moves = Position.getKingMoves(index, isWhite, pos.getCastlingRights(), board); 
+        moves = Position.getKingMoves(index, isWhite, pos); 
         break;
       case Piece.Type.QUEEN:
-        moves = Position.getQueenMoves(index, isWhite, board); 
+        moves = Position.getQueenMoves(index, isWhite, pos); 
         break;
       case Piece.Type.ROOK:
-        moves = Position.getRookMoves(index, isWhite, board); 
+        moves = Position.getRookMoves(index, isWhite, pos); 
         break;
       case Piece.Type.BISHOP:
-        moves = Position.getBishopMoves(index, isWhite, board); 
+        moves = Position.getBishopMoves(index, isWhite, pos); 
         break;
       case Piece.Type.KNIGHT:
-        moves = Position.getKnightMoves(index, isWhite, board); 
+        moves = Position.getKnightMoves(index, isWhite, pos); 
         break;
       case Piece.Type.PAWN:
-        moves = Position.getPawnMoves(index, isWhite, pos.getEnPassentTargetIndex(), board); 
+        moves = Position.getPawnMoves(index, isWhite, pos); 
         break;
     }
 
@@ -207,7 +207,10 @@ public class Position {
   }
 
   // TODO: Clean up code
-  public static List<Move> getKingMoves(int index, boolean isWhite, int castlingRights, Piece[] board) {
+  public static List<Move> getKingMoves(int index, boolean isWhite, Position pos) {
+    int castlingRights = pos.getCastlingRights();
+    Piece[] board = pos.getBoard();
+
     List<Move> moves = new ArrayList<Move>();
 
     boolean whiteKingside = (castlingRights & 8) == 8;
@@ -216,19 +219,19 @@ public class Position {
     boolean blackQueenside = (castlingRights & 1) == 1;
 
     if (board[5].equals(Piece.NONE) && board[6].equals(Piece.NONE) && whiteKingside && isWhite) {
-      moves.add(new Move(Move.MoveType.CASTLING, board).setCastling(8)); 
+      moves.add(new Move(Move.MoveType.CASTLING, pos).setCastling(8)); 
     }
 
     if (board[3].equals(Piece.NONE) && board[2].equals(Piece.NONE) && board[1].equals(Piece.NONE) && whiteQueenside && isWhite) {
-      moves.add(new Move(Move.MoveType.CASTLING, board).setCastling(4)); 
+      moves.add(new Move(Move.MoveType.CASTLING, pos).setCastling(4)); 
     }
 
     if (board[61].equals(Piece.NONE) && board[62].equals(Piece.NONE) && blackKingside && !isWhite) {
-      moves.add(new Move(Move.MoveType.CASTLING, board).setCastling(2)); 
+      moves.add(new Move(Move.MoveType.CASTLING, pos).setCastling(2)); 
     }
 
     if (board[59].equals(Piece.NONE) && board[58].equals(Piece.NONE) && board[57].equals(Piece.NONE) && blackQueenside && !isWhite) {
-      moves.add(new Move(Move.MoveType.CASTLING, board).setCastling(1)); 
+      moves.add(new Move(Move.MoveType.CASTLING, pos).setCastling(1)); 
     }
 
     for (int i = 0; i < 4; i++) {
@@ -241,10 +244,10 @@ public class Position {
       Piece pieceAtIndex = board[moveIndex];
       
       if (pieceAtIndex.equals(Piece.NONE)) {
-        moves.add(new Move(Move.MoveType.STANDARD, board).setFromIndex(index).setToIndex(moveIndex));
+        moves.add(new Move(Move.MoveType.STANDARD, pos).setFromIndex(index).setToIndex(moveIndex));
       }
       else if (pieceAtIndex.isWhite() != isWhite) {
-        moves.add(new Move(Move.MoveType.IRREVERSIBLE, board).setFromIndex(index).setToIndex(moveIndex));
+        moves.add(new Move(Move.MoveType.IRREVERSIBLE, pos).setFromIndex(index).setToIndex(moveIndex));
       }
 
       moveIndex = Position.getDiagonalMoveIndexInDirection(index, i);
@@ -256,17 +259,19 @@ public class Position {
       pieceAtIndex = board[moveIndex];
       
       if (pieceAtIndex.equals(Piece.NONE)) {
-        moves.add(new Move(Move.MoveType.STANDARD, board).setFromIndex(index).setToIndex(moveIndex));
+        moves.add(new Move(Move.MoveType.STANDARD, pos).setFromIndex(index).setToIndex(moveIndex));
       }
       else if (pieceAtIndex.isWhite() != isWhite) {
-        moves.add(new Move(Move.MoveType.IRREVERSIBLE, board).setFromIndex(index).setToIndex(moveIndex));
+        moves.add(new Move(Move.MoveType.IRREVERSIBLE, pos).setFromIndex(index).setToIndex(moveIndex));
       }
     }
 
     return moves;
   }
 
-  public static List<Move> getQueenMoves(int index, boolean isWhite, Piece[] board) {
+  public static List<Move> getQueenMoves(int index, boolean isWhite, Position pos) {
+    Piece[] board = pos.getBoard();
+
     List<Move> moves = new ArrayList<Move>();
     
     for (int i = 0; i < 4; i++) {
@@ -274,11 +279,11 @@ public class Position {
 
       while (moveIndex != -1) {
         if (board[moveIndex].equals(Piece.NONE)) {
-          moves.add(new Move(Move.MoveType.STANDARD, board).setFromIndex(index).setToIndex(moveIndex));
+          moves.add(new Move(Move.MoveType.STANDARD, pos).setFromIndex(index).setToIndex(moveIndex));
           moveIndex = Position.getStraightMoveIndexInDirection(moveIndex, i);
         }
         else if (board[moveIndex].isWhite() != isWhite) {
-          moves.add(new Move(Move.MoveType.IRREVERSIBLE, board).setFromIndex(index).setToIndex(moveIndex));
+          moves.add(new Move(Move.MoveType.IRREVERSIBLE, pos).setFromIndex(index).setToIndex(moveIndex));
           moveIndex = -1;
         }
         else {
@@ -290,11 +295,11 @@ public class Position {
 
       while (moveIndex != -1) {
         if (board[moveIndex].equals(Piece.NONE)) {
-          moves.add(new Move(Move.MoveType.STANDARD, board).setFromIndex(index).setToIndex(moveIndex));
+          moves.add(new Move(Move.MoveType.STANDARD, pos).setFromIndex(index).setToIndex(moveIndex));
           moveIndex = Position.getDiagonalMoveIndexInDirection(moveIndex, i);
         }
         else if (board[moveIndex].isWhite() != isWhite) {
-          moves.add(new Move(Move.MoveType.IRREVERSIBLE, board).setFromIndex(index).setToIndex(moveIndex));
+          moves.add(new Move(Move.MoveType.IRREVERSIBLE, pos).setFromIndex(index).setToIndex(moveIndex));
           moveIndex = -1;
         }
         else {
@@ -306,7 +311,9 @@ public class Position {
     return moves;
   }
 
-  public static List<Move> getRookMoves(int index, boolean isWhite, Piece[] board) {
+  public static List<Move> getRookMoves(int index, boolean isWhite, Position pos) {
+    Piece[] board = pos.getBoard();
+
     List<Move> moves = new ArrayList<Move>();
     
     for (int i = 0; i < 4; i++) {
@@ -314,11 +321,11 @@ public class Position {
 
       while (moveIndex != -1) {
         if (board[moveIndex].equals(Piece.NONE)) {
-          moves.add(new Move(Move.MoveType.STANDARD, board).setFromIndex(index).setToIndex(moveIndex));
+          moves.add(new Move(Move.MoveType.STANDARD, pos).setFromIndex(index).setToIndex(moveIndex));
           moveIndex = Position.getStraightMoveIndexInDirection(moveIndex, i);
         }
         else if (board[moveIndex].isWhite() != isWhite) {
-          moves.add(new Move(Move.MoveType.IRREVERSIBLE, board).setFromIndex(index).setToIndex(moveIndex));
+          moves.add(new Move(Move.MoveType.IRREVERSIBLE, pos).setFromIndex(index).setToIndex(moveIndex));
           moveIndex = -1;
         }
         else {
@@ -330,7 +337,9 @@ public class Position {
     return moves;
   }
 
-  public static List<Move> getBishopMoves(int index, boolean isWhite, Piece[] board) {
+  public static List<Move> getBishopMoves(int index, boolean isWhite, Position pos) {
+    Piece[] board = pos.getBoard();
+
     List<Move> moves = new ArrayList<Move>();
     
     for (int i = 0; i < 4; i++) {
@@ -338,11 +347,11 @@ public class Position {
 
       while (moveIndex != -1) {
         if (board[moveIndex].equals(Piece.NONE)) {
-          moves.add(new Move(Move.MoveType.STANDARD, board).setFromIndex(index).setToIndex(moveIndex));
+          moves.add(new Move(Move.MoveType.STANDARD, pos).setFromIndex(index).setToIndex(moveIndex));
           moveIndex = Position.getDiagonalMoveIndexInDirection(moveIndex, i);
         }
         else if (board[moveIndex].isWhite() != isWhite) {
-          moves.add(new Move(Move.MoveType.IRREVERSIBLE, board).setFromIndex(index).setToIndex(moveIndex));
+          moves.add(new Move(Move.MoveType.IRREVERSIBLE, pos).setFromIndex(index).setToIndex(moveIndex));
           moveIndex = -1;
         }
         else {
@@ -354,7 +363,9 @@ public class Position {
     return moves;
   }
 
-  public static List<Move> getKnightMoves(int index, boolean isWhite, Piece[] board) {
+  public static List<Move> getKnightMoves(int index, boolean isWhite, Position pos) {
+    Piece[] board = pos.getBoard();
+
     List<Move> moves = new ArrayList<Move>();
 
     int[] offsets = { 10, -6, 6, -10, 15, 17, -15, -17 };
@@ -380,23 +391,25 @@ public class Position {
       }
 
       if (board[newIndex].equals(Piece.NONE)) {
-        moves.add(new Move(Move.MoveType.STANDARD, board).setFromIndex(index).setToIndex(newIndex));
+        moves.add(new Move(Move.MoveType.STANDARD, pos).setFromIndex(index).setToIndex(newIndex));
         continue;
       }
 
-      moves.add(new Move(Move.MoveType.IRREVERSIBLE, board).setFromIndex(index).setToIndex(newIndex));
+      moves.add(new Move(Move.MoveType.IRREVERSIBLE, pos).setFromIndex(index).setToIndex(newIndex));
     }
 
     return moves;
   }
 
-  public static List<Move> getPawnMoves(int index, boolean isWhite, int enPassentTargetIndex, Piece[] board) {
+  public static List<Move> getPawnMoves(int index, boolean isWhite, Position pos) {
+    int enPassentTargetIndex = pos.getEnPassentTargetIndex();
+    Piece[] board = pos.getBoard();
     List<Move> moves = new ArrayList<Move>();
 
     int direction = isWhite ? 8 : -8;
 
     if (board[index + direction].equals(Piece.NONE)) {
-      moves.add(new Move(Move.MoveType.IRREVERSIBLE, board).setFromIndex(index).setToIndex(index + direction));
+      moves.add(new Move(Move.MoveType.IRREVERSIBLE, pos).setFromIndex(index).setToIndex(index + direction));
     }
 
     int startingRank = isWhite ? 1 : 6;
@@ -404,21 +417,21 @@ public class Position {
     boolean onStartingRank = (index - startingRank * 8) >= 0 && (index - startingRank * 8) <= 7;
 
     if (onStartingRank && board[index + 2 * direction].equals(Piece.NONE) && board[index + direction].equals(Piece.NONE)) {
-      moves.add(new Move(Move.MoveType.IRREVERSIBLE, board).setFromIndex(index).setToIndex(index + 2 * direction));
+      moves.add(new Move(Move.MoveType.IRREVERSIBLE, pos).setFromIndex(index).setToIndex(index + 2 * direction));
     }
 
     // if direction pm 1 contains enemy piece then that is legal move
     if (board[index + direction + 1].isWhite() != isWhite && !board[index + direction + 1].equals(Piece.NONE)) {
-      moves.add(new Move(Move.MoveType.IRREVERSIBLE, board).setFromIndex(index).setToIndex(index + direction + 1));
+      moves.add(new Move(Move.MoveType.IRREVERSIBLE, pos).setFromIndex(index).setToIndex(index + direction + 1));
     }
 
     if (board[index + direction - 1].isWhite() != isWhite && !board[index + direction - 1].equals(Piece.NONE)) {
-      moves.add(new Move(Move.MoveType.IRREVERSIBLE, board).setFromIndex(index).setToIndex(index + direction - 1));
+      moves.add(new Move(Move.MoveType.IRREVERSIBLE, pos).setFromIndex(index).setToIndex(index + direction - 1));
     }
 
     // if en passent target is set and pawn is in position then that is a legal move
     if (enPassentTargetIndex == index + direction + 1 || enPassentTargetIndex == index + direction - 1) {
-      moves.add(new Move(Move.MoveType.IRREVERSIBLE, board).setFromIndex(index).setToIndex(enPassentTargetIndex).setEnPassent());
+      moves.add(new Move(Move.MoveType.IRREVERSIBLE, pos).setFromIndex(index).setToIndex(enPassentTargetIndex).setEnPassent());
     }
 
     return moves;

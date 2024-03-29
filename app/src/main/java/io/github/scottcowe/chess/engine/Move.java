@@ -1,5 +1,8 @@
 package io.github.scottcowe.chess.engine;
 
+import java.util.List;
+import java.util.ArrayList;
+
 public class Move {
   public enum MoveType {
     STANDARD,
@@ -9,16 +12,16 @@ public class Move {
   }
 
   private MoveType type;
-  private Piece[] board;
+  private Position position;
   private int fromIndex;
   private int toIndex;
   private Piece promoteTo;
   private int castling;
   private boolean enPassent;
 
-  public Move(MoveType type, Piece[] board) {
+  public Move(MoveType type, Position position) {
     this.type = type;
-    this.board = board;
+    this.position = position;
     this.fromIndex = -1;
     this.toIndex = -1;
     this.promoteTo = Piece.NONE;
@@ -55,8 +58,28 @@ public class Move {
     return this.type;
   }
 
+  public Position getPosition() {
+    return this.position;
+  }
+
+  public int getFromIndex() {
+    return this.fromIndex;
+  }
+
+  public int getToIndex() {
+    return this.toIndex;
+  }
+
+  public Piece getPromoteTo() {
+    return this.promoteTo;
+  }
+
   public int getCastling() {
     return this.castling;
+  }
+
+  public boolean isEnPassent() {
+    return this.enPassent;
   }
 
   public int getEnPassentTargetIndex() {
@@ -64,7 +87,7 @@ public class Move {
       return -1;
     }
 
-    if (!this.board[this.fromIndex].getType().equals(Piece.Type.PAWN)) {
+    if (!this.position.getBoard()[this.fromIndex].getType().equals(Piece.Type.PAWN)) {
       return -1;
     }
 
@@ -78,10 +101,10 @@ public class Move {
   }
 
   public Piece[] applyToBoard() {
-    Piece[] newBoard = this.board;
+    Piece[] newBoard = this.position.getBoard();
 
     if (this.getType().equals(MoveType.STANDARD) || this.getType().equals(MoveType.IRREVERSIBLE)) {
-      Piece fromPiece = this.board[this.fromIndex];
+      Piece fromPiece = this.position.getBoard()[this.fromIndex];
 
       newBoard[this.fromIndex] = Piece.NONE;
       newBoard[this.toIndex] = fromPiece;
@@ -109,8 +132,8 @@ public class Move {
       newBoard[oldKingIndex] = Piece.NONE;
       newBoard[oldRookIndex] = Piece.NONE;
 
-      newBoard[newKingIndex] = this.board[oldKingIndex];
-      newBoard[newRookIndex] = this.board[oldRookIndex];
+      newBoard[newKingIndex] = this.position.getBoard()[oldKingIndex];
+      newBoard[newRookIndex] = this.position.getBoard()[oldRookIndex];
     }
 
     return newBoard;
@@ -129,12 +152,53 @@ public class Move {
     String fromAlgebraic = Position.getAlgebraicFromIndex(this.fromIndex);
     String toAlgebraic = Position.getAlgebraicFromIndex(this.toIndex);
 
-    char fromChar = this.board[fromIndex].getAsChar();
+    char fromChar = this.position.getBoard()[fromIndex].getAsChar();
 
     // Check if mutiple pieces could move to the square
+    List<Move> allMoves = Position.getAllPseudoLegalMoves(this.position, this.position.isWhitesMove());
+    allMoves = Position.removeIllegalMoves(allMoves);
+    allMoves.remove(this);
 
+    Piece[] board = this.position.getBoard();
 
-    return "";
+    boolean sameRow = true;
+    boolean sameCol = true;
+
+    for (Move move : allMoves) {
+      if (move.getToIndex() == this.toIndex && board[move.getFromIndex()] == board[this.fromIndex] /*&& !this.equals(move)*/) {
+        if (Math.abs(this.fromIndex - move.getFromIndex()) % 8 != 0) {
+          sameCol = false;
+        }
+
+        if (Math.abs(this.fromIndex - move.getFromIndex()) > 7) {
+          sameRow = false;
+        }
+      }
+    }
+
+    String algebraic = toAlgebraic;
+
+    if (!board[this.toIndex].equals(Piece.NONE)) { // If capture
+      algebraic = "x" + algebraic;
+    }
+
+    if (!sameRow) {
+      algebraic = Character.toString((int) (this.fromIndex / 8) + '1') + algebraic;
+    }
+
+    if (!sameCol) {
+      algebraic = Character.toString(this.fromIndex % 8 + 'a') + algebraic;
+    }
+
+    algebraic = fromChar + algebraic;
+
+    if (this.getType().equals(MoveType.PROMOTION)) {
+      char promoteToChar = this.promoteTo.getAsChar();
+
+      algebraic += "=" + promoteToChar;
+    }
+
+    return algebraic;
   }
 
   public static Move fromString(String string) {
@@ -149,7 +213,31 @@ public class Move {
 
     Move move = (Move) object;
 
-    if (this.toString() != move.toString()) {
+    if (!this.type.equals(move.getType())) {
+      return false;
+    }
+
+    if (!this.position.equals(move.getPosition())) {
+      //return false;
+    }
+
+    if (this.fromIndex != move.getFromIndex()) {
+      return false;
+    }
+
+    if (this.toIndex != move.getToIndex()) {
+      return false;
+    }
+
+    if (!this.promoteTo.equals(move.getPromoteTo())) {
+      return false;
+    }
+
+    if (this.castling != move.getCastling()) {
+      return false;
+    }
+
+    if (this.enPassent != move.isEnPassent()) {
       return false;
     }
 

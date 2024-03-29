@@ -7,7 +7,17 @@ import io.github.scottcowe.chess.engine.*;
 
 public class Main {
   public static void main(String[] args) {
-    simpleGame(); 
+    //simpleGame(); 
+
+    Position pos = new Position("8/8/8/8/8/8/2N1N3/8 w KQkq - 0 1");
+    System.out.println(pos);
+
+    List<Move> moves = Position.getAllPseudoLegalMoves(pos, pos.isWhitesMove());
+    moves = Position.removeIllegalMoves(moves);
+
+    for (Move move : moves) {
+      System.out.println(move);
+    }
   }
 
   // TODO: Make castling work here, as well as promoting
@@ -34,7 +44,7 @@ public class Main {
         continue;
       }
 
-      Move move = new Move(Move.MoveType.STANDARD, pos.getBoard()).setFromIndex(fromIndex).setToIndex(toIndex);
+      Move move = new Move(Move.MoveType.STANDARD, pos).setFromIndex(fromIndex).setToIndex(toIndex);
 
       List<Move> moves = Position.getAllPseudoLegalMoves(pos, pos.isWhitesMove());
       moves = Position.removeIllegalMoves(moves);
