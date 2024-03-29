@@ -10,6 +10,7 @@ public class Main {
     simpleGame(); 
   }
 
+  // TODO: Make castling work here, as well as promoting
   public static void simpleGame() {
     Position pos = new Position();
     System.out.println(pos);
@@ -33,9 +34,9 @@ public class Main {
         continue;
       }
 
-      Move move = new Move(fromIndex, toIndex);
+      Move move = new Move(Move.MoveType.STANDARD, pos.getBoard()).setFromIndex(fromIndex).setToIndex(toIndex);
 
-      List<Move> moves = pos.getAllPseudoLegalMoves();
+      List<Move> moves = Position.getAllPseudoLegalMoves(pos, pos.isWhitesMove());
       moves = Position.removeIllegalMoves(moves);
 
       for (Move m : moves) {
