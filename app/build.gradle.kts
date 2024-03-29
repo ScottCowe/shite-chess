@@ -37,6 +37,10 @@ application {
     mainClass = "io.github.scottcowe.chess.Main"
 }
 
+tasks.getByName("run", JavaExec::class) {
+ standardInput = System.`in`
+}
+
 tasks.named<Test>("test") {
     // Use JUnit Platform for unit tests.
     useJUnitPlatform()

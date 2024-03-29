@@ -1,26 +1,52 @@
 package io.github.scottcowe.chess;
 
 import java.util.List;
+import java.util.Scanner;
 
 import io.github.scottcowe.chess.engine.*;
 
 public class Main {
   public static void main(String[] args) {
+    simpleGame(); 
+  }
+
+  public static void simpleGame() {
     Position pos = new Position();
     System.out.println(pos);
 
-    List<Move> moves = pos.getAllPseudoLegalMoves();
-    moves = Position.removeIllegalMoves(moves);
+    Scanner scanner = new Scanner(System.in);
 
-    Move move = new Move(12, 28);
+    outer: 
+    while (true) {
+      System.out.println("What piece to move?");
+      String piece = scanner.nextLine();
 
-    for (Move m : moves) {
-      if (m.equals(move)) {
-        pos = pos.doMove(move);
-        break;
+      int fromIndex = Position.getIndexFromAlgebraic(piece);
+
+      System.out.println("Where to?");
+      String square = scanner.nextLine();
+
+      int toIndex = Position.getIndexFromAlgebraic(square);
+
+      if (fromIndex == -1 || toIndex == -1) {
+        System.out.println("Nuh uh");
+        continue;
       }
-    }
 
-    System.out.println(pos);
+      Move move = new Move(fromIndex, toIndex);
+
+      List<Move> moves = pos.getAllPseudoLegalMoves();
+      moves = Position.removeIllegalMoves(moves);
+
+      for (Move m : moves) {
+        if (m.equals(move)) {
+          pos = pos.doMove(move);
+          System.out.println(pos);
+          continue outer;        
+        }
+      }
+
+      System.out.println("Illegal");
+    }
   }
 }

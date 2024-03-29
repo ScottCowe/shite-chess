@@ -116,7 +116,7 @@ public class Position {
     char firstChar = algebraic.charAt(0);
     char secondChar = algebraic.charAt(1);
 
-    int rows = Character.getNumericValue(secondChar);
+    int rows = Character.getNumericValue(secondChar) - 1;
     int cols = firstChar - 97;
 
     return rows * 8 + cols;
