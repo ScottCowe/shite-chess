@@ -9,13 +9,16 @@ public class Main {
   public static void main(String[] args) {
     //simpleGame(); 
 
-    Position pos = new Position("8/8/8/8/8/8/2N1N3/8 w KQkq - 0 1");
+    Position pos = new Position();
     System.out.println(pos);
 
-    List<Move> moves = Position.getAllPseudoLegalMoves(pos, pos.isWhitesMove());
-    moves = Position.removeIllegalMoves(moves);
+    Scanner scanner = new Scanner(System.in);
 
-    for (Move move : moves) {
+    while (true) {
+      System.out.println("Enter move");
+      String mv = scanner.nextLine();
+
+      Move move = Move.fromString(mv, pos);
       System.out.println(move);
     }
   }
