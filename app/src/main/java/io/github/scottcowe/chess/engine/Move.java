@@ -10,17 +10,11 @@ public class Move {
 
   private MoveType type;
   private Piece[] board;
-
-  // For standard, irreversible, promotion
   private int fromIndex;
   private int toIndex;
-  
-  // For promotion
   private Piece promoteTo;
-
-  // For castling
-  // Stored as nibble - 8 for white kingside, ... , 1 for black queenside
   private int castling;
+  private boolean enPassent;
 
   public Move(MoveType type, Piece[] board) {
     this.type = type;
@@ -29,6 +23,7 @@ public class Move {
     this.toIndex = -1;
     this.promoteTo = Piece.NONE;
     this.castling = 0;
+    this.enPassent = false;
   }
 
   public Move setFromIndex(int fromIndex) {
@@ -51,6 +46,11 @@ public class Move {
     return this;
   }
 
+  public Move setEnPassent() {
+    this.enPassent = true;
+    return this;
+  }
+
   public MoveType getType() {
     return this.type;
   }
@@ -60,13 +60,58 @@ public class Move {
   }
 
   public int getEnPassentTargetIndex() {
-    return -1;
+    if (!this.getType().equals(MoveType.IRREVERSIBLE)) {
+      return -1;
+    }
+
+    if (!this.board[this.fromIndex].getType().equals(Piece.Type.PAWN)) {
+      return -1;
+    }
+
+    if (Math.abs(fromIndex - toIndex) != 16) {
+      return -1;
+    }
+
+    int direction = (fromIndex - toIndex) / 16;
+
+    return toIndex + 8 * direction;
   }
 
   public Piece[] applyToBoard() {
     Piece[] newBoard = this.board;
 
-    
+    if (this.getType().equals(MoveType.STANDARD) || this.getType().equals(MoveType.IRREVERSIBLE)) {
+      Piece fromPiece = this.board[this.fromIndex];
+
+      newBoard[this.fromIndex] = Piece.NONE;
+      newBoard[this.toIndex] = fromPiece;
+
+      if (this.enPassent) {
+        int capturedPiece = this.toIndex + (this.fromIndex > this.toIndex ? 8 : -8);
+        newBoard[capturedPiece] = Piece.NONE;
+      }
+    }
+    else if (this.getType().equals(MoveType.PROMOTION)) {
+      newBoard[this.fromIndex] = Piece.NONE;
+      newBoard[this.toIndex] = this.promoteTo;
+    }
+    else { // castling
+      boolean isWhite = this.castling > 2;
+      int offset = isWhite ? 0 : 56;
+      boolean kingside = this.castling == 8 || this.castling == 2;
+
+      int oldKingIndex = 4 + offset;
+      int oldRookIndex = (kingside ? 7 : 0) + offset;
+
+      int newKingIndex = (kingside ? 6 : 2) + offset;
+      int newRookIndex = (kingside ? 5 : 3) + offset;
+
+      newBoard[oldKingIndex] = Piece.NONE;
+      newBoard[oldRookIndex] = Piece.NONE;
+
+      newBoard[newKingIndex] = this.board[oldKingIndex];
+      newBoard[newRookIndex] = this.board[oldRookIndex];
+    }
 
     return newBoard;
   }

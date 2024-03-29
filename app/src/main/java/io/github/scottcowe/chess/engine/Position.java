@@ -418,7 +418,7 @@ public class Position {
 
     // if en passent target is set and pawn is in position then that is a legal move
     if (enPassentTargetIndex == index + direction + 1 || enPassentTargetIndex == index + direction - 1) {
-      moves.add(new Move(Move.MoveType.IRREVERSIBLE, board).setFromIndex(index).setToIndex(enPassentTargetIndex));
+      moves.add(new Move(Move.MoveType.IRREVERSIBLE, board).setFromIndex(index).setToIndex(enPassentTargetIndex).setEnPassent());
     }
 
     return moves;
