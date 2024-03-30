@@ -213,97 +213,108 @@ public class Move {
       return new Move(MoveType.CASTLING, pos).setCastling(castling);
     }
 
-    if (string.charAt(string.length() - 2) == '=') { // If promotion
-      char promoteToChar = string.charAt(string.length() - 1);
-      Piece promoteTo = Piece.getFromChar(promoteToChar);
+    boolean capture = string.contains("x");
+    string = string.replace("x", "");
+    MoveType moveType = capture ? MoveType.IRREVERSIBLE : MoveType.STANDARD;
 
-      String toAlgebraic = string.substring(string.length() - 5, string.length() - 2);
-      int toIndex = Position.getIndexFromAlgebraic(toAlgebraic); 
+    if (string.contains("=")) {
+      char promoteToChar = string.substring(string.length() - 1).charAt(0);
+      Piece promoteTo = Piece.getFromChar(whitesMove ? promoteToChar : Character.toLowerCase(promoteToChar));
 
-      if (string.length() == 4) { // No disambiguation
+      string = string.replace("=" + promoteToChar, "");
+
+      String toAlgebraic = string.substring(string.length() - 2);
+      int toIndex = Position.getIndexFromAlgebraic(toAlgebraic);
+
+      string = string.replace(toAlgebraic, "");
+
+      if (string.length() == 0) {
         return new Move(MoveType.PROMOTION, pos)
-          .setFromIndex(toIndex + (whitesMove ? -8 : 8))
-          .setToIndex(toIndex)
-          .setPromoteTo(promoteTo);
+          .setFromIndex(toIndex - (whitesMove ? 8 : -8))
+          .setToIndex(toIndex);
       }
 
-      int fromCol = string.charAt(0) - '1';
+      int fromCol = string.charAt(0) - 'a';
       int fromIndex = 48 + fromCol;
 
       return new Move(MoveType.PROMOTION, pos)
-        .setFromIndex(fromIndex).setToIndex(toIndex).setPromoteTo(promoteTo);
+        .setFromIndex(fromIndex)
+        .setToIndex(toIndex);
     }
 
-    String toAlgebraic = string.substring(string.length() - 2, string.length());
-    int toIndex = Position.getIndexFromAlgebraic(toAlgebraic); 
+    String toAlgebraic = string.substring(string.length() - 2);
+    int toIndex = Position.getIndexFromAlgebraic(toAlgebraic);
 
-    Piece fromPiece = Piece.getFromChar(string.charAt(0));
+    string = string.replace(toAlgebraic, "");
 
-    boolean capture = string.contains("x");
-    string.replace("x", "");
+    Piece fromPiece = Piece.NONE;
+    int fromRow = -1;
+    int fromCol = -1;
 
-    MoveType moveType = capture ? MoveType.IRREVERSIBLE : MoveType.STANDARD;
+    if (string.length() != 0) {
+      char firstChar = string.charAt(0);
+      if (Character.isUpperCase(firstChar)) {
+        fromPiece = Piece.getFromChar(whitesMove ? firstChar : Character.toLowerCase(firstChar));
+      }
 
-    if (string.length() == 5) { // Will not be en passent as row is implied there, and therefore len would be 4
-      String fromAlgebraic = string.substring(1, 4);
-      int fromIndex = Position.getIndexFromAlgebraic(fromAlgebraic);
-
-      return new Move(moveType, pos).setFromIndex(fromIndex).setToIndex(toIndex); 
+      string = string.replace(firstChar + "", ""); 
     }
 
-    if (pos.getBoard()[toIndex].equals(Piece.NONE) && capture) { // En passent
-      int fromCol = string.charAt(0) - 'a';
-      int fromIndex = fromCol + (pos.isWhitesMove() ? 4 : 3);
-
-      return new Move(moveType, pos).setFromIndex(fromIndex).setToIndex(toIndex); 
+    if (string.length() != 0) {
+      char firstChar = string.charAt(0);
+      if (Character.isDigit(firstChar)) {
+        fromRow = firstChar - '1';
+      }
+      else {
+        fromCol = firstChar - 'a';
+      }
+      
+      string = string.replace(firstChar + "", ""); 
     }
 
-    int row = -1;
-    int col = -1;
-
-    char rowcol = string.charAt(1);
-
-    if (rowcol > 64 && string.length() != 3) { // is col
-      col = rowcol - 'a';
-    }
-    else if (string.length() != 3) {
-      row = rowcol - '1';
+    if (string.length() != 0) {
+      fromRow = string.charAt(0) - '1'; // as col comes before row, if the string still has a char at this point, it must be row
+      string = string.replace(string.charAt(0) + "", "");
     }
 
-    List<Move> allMoves = Position.getAllPseudoLegalMoves(pos, pos.isWhitesMove());
-    allMoves = Position.removeIllegalMoves(allMoves);
+    // string should be empty now
+    System.out.println("String is: " + string);
 
-    for (Move move : allMoves) {
-      if (!fromPiece.equals(pos.getBoard()[move.getFromIndex()])) {
+    List<Move> possibleMoves = Position.getAllPseudoLegalMoves(pos, pos.isWhitesMove());
+    possibleMoves = Position.removeIllegalMoves(possibleMoves);
+
+    List<Move> toRemove = new ArrayList<Move>();
+
+    for (Move move : possibleMoves) {
+      if (move.getToIndex() != toIndex) {
+        toRemove.add(move);
         continue;
       }
 
-      if (row == -1 && col == -1) {
-        return new Move(moveType, pos).setFromIndex(move.getFromIndex()).setToIndex(toIndex);
+      if (!pos.getBoard()[move.getFromIndex()].equals(fromPiece) && fromPiece != Piece.NONE) {
+        toRemove.add(move);
+        continue;
       }
-      else if (row == -1) {
-        if (move.getFromIndex() % 8 != col) {
-          continue;
-        }
 
-        int moveRow = (int) move.getFromIndex() / 8;
-        int fromIndex = col + 8 * moveRow;
+      int moveFromRow = (int) move.getFromIndex() / 8;
+      int moveFromCol = move.getFromIndex() % 8;
 
-        return new Move(moveType, pos).setFromIndex(fromIndex).setToIndex(toIndex);
+      if (moveFromRow != fromRow && fromRow != -1) {
+        toRemove.add(move);
+        continue;
       }
-      else {
-        if ((int) move.getFromIndex() / 8 != row) {
-          continue;
-        }
 
-        int moveCol = move.getFromIndex() % 8;
-        int fromIndex = moveCol + 8 * row;
-
-        return new Move(moveType, pos).setFromIndex(fromIndex).setToIndex(toIndex);
+      if (moveFromCol != fromCol && fromCol != -1) {
+        toRemove.add(move);
+        continue;
       }
     }
 
-    return null;
+    possibleMoves.removeAll(toRemove);
+
+    // In theory, there should only be one possible move at this point
+    System.out.println(possibleMoves.size() + " possible move(s)");
+    return possibleMoves.get(0);
   }
 
   @Override
