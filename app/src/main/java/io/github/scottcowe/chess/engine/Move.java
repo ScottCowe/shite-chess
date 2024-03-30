@@ -101,7 +101,7 @@ public class Move {
   }
 
   public Piece[] applyToBoard() {
-    Piece[] newBoard = this.position.getBoard();
+    Piece[] newBoard = this.position.getBoard().clone();
 
     if (this.getType().equals(MoveType.STANDARD) || this.getType().equals(MoveType.IRREVERSIBLE)) {
       Piece fromPiece = this.position.getBoard()[this.fromIndex];
@@ -189,8 +189,10 @@ public class Move {
     if (!sameCol) {
       algebraic = Character.toString(this.fromIndex % 8 + 'a') + algebraic;
     }
-
-    algebraic = Character.toUpperCase(fromChar) + algebraic;
+      
+    if (Character.toUpperCase(fromChar) != 'P') {
+      algebraic = Character.toUpperCase(fromChar) + algebraic;
+    }
 
     if (this.getType().equals(MoveType.PROMOTION)) {
       char promoteToChar = this.promoteTo.getAsChar();
@@ -282,11 +284,7 @@ public class Move {
 
     List<Move> toRemove = new ArrayList<Move>();
 
-    String mvString = "";
-
     for (Move move : possibleMoves) {
-      mvString += move + " ";
-
       if (move.getToIndex() != toIndex) {
         toRemove.add(move);
         continue;
@@ -311,8 +309,6 @@ public class Move {
       }
     }
 
-    System.out.println(mvString);
-
     possibleMoves.removeAll(toRemove);
 
     if (possibleMoves.size() == 0) {
@@ -320,7 +316,6 @@ public class Move {
     }
 
     if (possibleMoves.size() > 1) {
-      System.out.println("Ambigous");
       for (Move move : possibleMoves) {
         if (pos.getBoard()[move.getFromIndex()].getType().equals(Piece.Type.PAWN)) {
           return move;
