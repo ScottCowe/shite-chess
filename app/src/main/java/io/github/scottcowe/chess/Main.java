@@ -8,6 +8,20 @@ import io.github.scottcowe.chess.engine.*;
 public class Main {
   public static void main(String[] args) {
     simpleGame(); 
+
+    /*Position pos = new Position("1n6/8/8/8/8/8/8/8 b KQkq - 0 1");
+    System.out.println(pos);
+
+    List<Move> possibleMoves = Position.getAllPseudoLegalMoves(pos, pos.isWhitesMove());
+    possibleMoves = Position.removeIllegalMoves(possibleMoves);
+
+    String moves = "";
+
+    for (Move move : possibleMoves) {
+      moves += move + " "; 
+    }
+
+    System.out.println(moves);*/
   }
 
   public static void simpleGame() {
@@ -23,7 +37,7 @@ public class Main {
       Move move = Move.fromString(moveString, pos);
 
       if (move == null) {
-        System.out.println("Nuh uh - could be illegal, or ambigous (shouldn't be)");
+        System.out.println("Nuh uh");
         continue;
       }
 

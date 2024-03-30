@@ -386,7 +386,7 @@ public class Position {
         continue; 
       }
 
-      if (board[newIndex].isWhite() == isWhite) {
+      if (board[newIndex].isWhite() == isWhite && !board[newIndex].equals(Piece.NONE)) {
         continue;
       }
 

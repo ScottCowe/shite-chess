@@ -190,7 +190,7 @@ public class Move {
       algebraic = Character.toString(this.fromIndex % 8 + 'a') + algebraic;
     }
 
-    algebraic = fromChar + algebraic;
+    algebraic = Character.toUpperCase(fromChar) + algebraic;
 
     if (this.getType().equals(MoveType.PROMOTION)) {
       char promoteToChar = this.promoteTo.getAsChar();
@@ -282,7 +282,11 @@ public class Move {
 
     List<Move> toRemove = new ArrayList<Move>();
 
+    String mvString = "";
+
     for (Move move : possibleMoves) {
+      mvString += move + " ";
+
       if (move.getToIndex() != toIndex) {
         toRemove.add(move);
         continue;
@@ -307,6 +311,8 @@ public class Move {
       }
     }
 
+    System.out.println(mvString);
+
     possibleMoves.removeAll(toRemove);
 
     if (possibleMoves.size() == 0) {
@@ -314,6 +320,7 @@ public class Move {
     }
 
     if (possibleMoves.size() > 1) {
+      System.out.println("Ambigous");
       for (Move move : possibleMoves) {
         if (pos.getBoard()[move.getFromIndex()].getType().equals(Piece.Type.PAWN)) {
           return move;
