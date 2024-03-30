@@ -206,12 +206,14 @@ public class Move {
   public static Move fromString(String string, Position pos) {
     boolean whitesMove = pos.isWhitesMove();
 
-    if (string == "O-O") {
-      int castling = 2 << (whitesMove ? 2 : 0);
+    string = string.trim();
+
+    if (string.contains("O-O-O")) {
+      int castling = 1 << (whitesMove ? 2 : 0);
       return new Move(MoveType.CASTLING, pos).setCastling(castling);
     }
-    else if (string == "O-O-O") {
-      int castling = 1 << (whitesMove ? 2 : 0);
+    else if (string.contains("O-O")) {
+      int castling = 2 << (whitesMove ? 2 : 0);
       return new Move(MoveType.CASTLING, pos).setCastling(castling);
     }
 
