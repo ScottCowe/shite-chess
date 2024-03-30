@@ -277,9 +277,6 @@ public class Move {
       string = string.replace(string.charAt(0) + "", "");
     }
 
-    // string should be empty now
-    System.out.println("String is: " + string);
-
     List<Move> possibleMoves = Position.getAllPseudoLegalMoves(pos, pos.isWhitesMove());
     possibleMoves = Position.removeIllegalMoves(possibleMoves);
 
@@ -312,8 +309,18 @@ public class Move {
 
     possibleMoves.removeAll(toRemove);
 
-    // In theory, there should only be one possible move at this point
-    System.out.println(possibleMoves.size() + " possible move(s)");
+    if (possibleMoves.size() == 0) {
+      return null;
+    }
+
+    if (possibleMoves.size() > 1) {
+      for (Move move : possibleMoves) {
+        if (pos.getBoard()[move.getFromIndex()].getType().equals(Piece.Type.PAWN)) {
+          return move;
+        }
+      }
+    }
+
     return possibleMoves.get(0);
   }
 

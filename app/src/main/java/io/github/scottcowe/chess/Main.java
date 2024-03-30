@@ -7,60 +7,28 @@ import io.github.scottcowe.chess.engine.*;
 
 public class Main {
   public static void main(String[] args) {
-    //simpleGame(); 
-
-    Position pos = new Position();
-    System.out.println(pos);
-
-    Scanner scanner = new Scanner(System.in);
-
-    while (true) {
-      System.out.println("Enter move");
-      String mv = scanner.nextLine();
-
-      Move move = Move.fromString(mv, pos);
-      System.out.println(move);
-    }
+    simpleGame(); 
   }
 
-  // TODO: Make castling work here, as well as promoting
   public static void simpleGame() {
     Position pos = new Position();
     System.out.println(pos);
 
     Scanner scanner = new Scanner(System.in);
 
-    outer: 
     while (true) {
-      System.out.println("What piece to move?");
-      String piece = scanner.nextLine();
+      System.out.println("What move?");
+      String moveString = scanner.nextLine();
 
-      int fromIndex = Position.getIndexFromAlgebraic(piece);
+      Move move = Move.fromString(moveString, pos);
 
-      System.out.println("Where to?");
-      String square = scanner.nextLine();
-
-      int toIndex = Position.getIndexFromAlgebraic(square);
-
-      if (fromIndex == -1 || toIndex == -1) {
-        System.out.println("Nuh uh");
+      if (move == null) {
+        System.out.println("Nuh uh - could be illegal, or ambigous (shouldn't be)");
         continue;
       }
 
-      Move move = new Move(Move.MoveType.STANDARD, pos).setFromIndex(fromIndex).setToIndex(toIndex);
-
-      List<Move> moves = Position.getAllPseudoLegalMoves(pos, pos.isWhitesMove());
-      moves = Position.removeIllegalMoves(moves);
-
-      for (Move m : moves) {
-        if (m.equals(move)) {
-          pos = pos.doMove(move);
-          System.out.println(pos);
-          continue outer;        
-        }
-      }
-
-      System.out.println("Illegal");
+      pos = pos.doMove(move);
+      System.out.println(pos);
     }
   }
 }
