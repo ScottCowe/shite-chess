@@ -159,11 +159,11 @@ public class Position {
     return moves;
   }
 
-  public static List<Move> getAllPseudoLegalMoves(Position pos, boolean whitesMove) {
+  public static List<Move> getAllPseudoLegalMoves(Position pos) {
     List<Move> moves = new ArrayList<Move>();
 
     for (Piece pieceType : Piece.values()) {
-      if (pieceType != Piece.NONE && pieceType.isWhite() == whitesMove) {
+      if (pieceType != Piece.NONE && pieceType.isWhite() == pos.isWhitesMove()) {
         List<Integer> indexes = Position.getPieceIndexesOfType(pieceType, pos.getBoard());
         for (Integer index : indexes) {
           moves.addAll(Position.getPseudoLegalMovesForPiece(index, pos));

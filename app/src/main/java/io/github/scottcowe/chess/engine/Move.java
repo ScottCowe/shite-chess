@@ -155,7 +155,7 @@ public class Move {
     char fromChar = this.position.getBoard()[fromIndex].getAsChar();
 
     // Check if mutiple pieces could move to the square
-    List<Move> allMoves = Position.getAllPseudoLegalMoves(this.position, this.position.isWhitesMove());
+    List<Move> allMoves = Position.getAllPseudoLegalMoves(this.position);
     allMoves = Position.removeIllegalMoves(allMoves);
     allMoves.remove(this);
 
@@ -281,7 +281,7 @@ public class Move {
       string = string.replace(string.charAt(0) + "", "");
     }
 
-    List<Move> possibleMoves = Position.getAllPseudoLegalMoves(pos, pos.isWhitesMove());
+    List<Move> possibleMoves = Position.getAllPseudoLegalMoves(pos); 
     possibleMoves = Position.removeIllegalMoves(possibleMoves);
 
     List<Move> toRemove = new ArrayList<Move>();
@@ -313,8 +313,8 @@ public class Move {
 
     possibleMoves.removeAll(toRemove);
 
-    if (possibleMoves.size() == 0) {
-      return null;
+    if (possibleMoves.size() == 1) {
+      return possibleMoves.get(0);
     }
 
     if (possibleMoves.size() > 1) {
@@ -325,7 +325,7 @@ public class Move {
       }
     }
 
-    return possibleMoves.get(0);
+    return null;
   }
 
   @Override
