@@ -548,7 +548,29 @@ public class Position {
 
     Position pos = (Position) object;
 
-    // Check if board, move, ... is same
+    if (!this.board.equals(pos.getBoard())) {
+      return false;
+    }
+
+    if (this.whitesMove != pos.isWhitesMove()) {
+      return false;
+    }
+
+    if (this.castlingRights != pos.getCastlingRights()) {
+      return false;
+    }
+
+    if (this.enPassentTargetIndex != pos.getEnPassentTargetIndex()) {
+      return false;
+    }
+
+    if (this.halfmoveClock != pos.getHalfmoveClock()) {
+      return false;
+    }
+
+    if (this.fullmoveCounter != this.getFullmoveCounter()) {
+      return false;
+    }
 
     return true;
   }

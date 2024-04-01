@@ -341,7 +341,7 @@ public class Move {
     }
 
     if (!this.position.equals(move.getPosition())) {
-      //return false;
+      return false;
     }
 
     if (this.fromIndex != move.getFromIndex()) {

@@ -8,20 +8,6 @@ import io.github.scottcowe.chess.engine.*;
 public class Main {
   public static void main(String[] args) {
     simpleGame(); 
-
-    /*Position pos = new Position("1n6/8/8/8/8/8/8/8 b KQkq - 0 1");
-    System.out.println(pos);
-
-    List<Move> possibleMoves = Position.getAllPseudoLegalMoves(pos, pos.isWhitesMove());
-    possibleMoves = Position.removeIllegalMoves(possibleMoves);
-
-    String moves = "";
-
-    for (Move move : possibleMoves) {
-      moves += move + " "; 
-    }
-
-    System.out.println(moves);*/
   }
 
   public static void simpleGame() {
@@ -31,6 +17,17 @@ public class Main {
     Scanner scanner = new Scanner(System.in);
 
     while (true) {
+      List<Move> moves = Position.getAllPseudoLegalMoves(pos); 
+      moves = Position.removeIllegalMoves(moves);
+
+      String movesStr = "";
+
+      for (Move move : moves) {
+        movesStr += move + " "; 
+      }
+
+      System.out.println(movesStr);
+
       System.out.println("What move?");
       String moveString = scanner.nextLine();
 
