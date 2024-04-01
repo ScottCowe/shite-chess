@@ -156,7 +156,7 @@ public class Move {
 
     // Check if mutiple pieces could move to the square
     List<Move> allMoves = Position.getAllPseudoLegalMoves(this.position);
-    allMoves = Position.removeIllegalMoves(allMoves);
+    allMoves = Position.removeIllegalMoves(allMoves, this.position);
     allMoves.remove(this);
 
     Piece[] board = this.position.getBoard();
@@ -282,7 +282,7 @@ public class Move {
     }
 
     List<Move> possibleMoves = Position.getAllPseudoLegalMoves(pos); 
-    possibleMoves = Position.removeIllegalMoves(possibleMoves);
+    possibleMoves = Position.removeIllegalMoves(possibleMoves, pos);
 
     List<Move> toRemove = new ArrayList<Move>();
 

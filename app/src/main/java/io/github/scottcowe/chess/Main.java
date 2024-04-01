@@ -18,7 +18,7 @@ public class Main {
 
     while (true) {
       List<Move> moves = Position.getAllPseudoLegalMoves(pos); 
-      moves = Position.removeIllegalMoves(moves);
+      moves = Position.removeIllegalMoves(moves, pos);
 
       String movesStr = "";
 

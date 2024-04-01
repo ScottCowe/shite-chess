@@ -154,9 +154,37 @@ public class Position {
     return new Position(newBoard, !this.whitesMove, newCastlingRights, newEnPassentTargetIndex, newHalfmoveClock, newFullmoveCounter);
   }
 
-  public static List<Move> removeIllegalMoves(List<Move> pseudoLegalMoves) {
+  public static List<Move> removeIllegalMoves(List<Move> pseudoLegalMoves, Position pos) {
     List<Move> moves = pseudoLegalMoves;
+
+    List<Move> toRemove = new ArrayList<Move>();
+
+    for (Move move : moves) {
+      if (!Position.isMoveLegal(move, pos)) {
+        toRemove.add(move);
+      }
+    }
+
+    moves.removeAll(toRemove);
+
     return moves;
+  }
+
+  // TODO: Implement exception for castling - this may be why depth 3 perft fails
+  public static boolean isMoveLegal(Move move, Position pos) {
+    Position newPos = pos.doMove(move);
+    List<Move> moves = Position.getAllPseudoLegalMoves(newPos);
+
+    Piece king = pos.isWhitesMove() ? Piece.WHITE_KING : Piece.BLACK_KING;
+
+    for (Move m : moves) {
+      int toIndex = m.getToIndex();
+      if (newPos.getBoard()[toIndex].equals(king)) {
+        return false;
+      }
+    }
+
+    return true;
   }
 
   public static List<Move> getAllPseudoLegalMoves(Position pos) {
