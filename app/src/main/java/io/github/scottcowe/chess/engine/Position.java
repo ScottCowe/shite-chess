@@ -170,8 +170,22 @@ public class Position {
     return moves;
   }
 
-  // TODO: Implement exception for castling - this may be why depth 3 perft fails
+  public static boolean isSquareAttacked(int index, Position pos, boolean pseudoLegal) {
+    // Get pseudolegal moves for side that is attacking
+    // if pseudoLegal is false then check legal moves as well
+    List<Move> moves = Position.getAllPseudoLegalMoves(pos);
+
+    return false;
+  }
+
   public static boolean isMoveLegal(Move move, Position pos) {
+    boolean isWhite = pos.isWhitesMove();
+
+    if (move.getType().equals(Move.MoveType.CASTLING)) {
+      // if king square, or adj squares until excl rook are attacked then illegal 
+      
+    }
+
     Position newPos = pos.doMove(move);
     List<Move> moves = Position.getAllPseudoLegalMoves(newPos);
 
