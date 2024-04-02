@@ -7,30 +7,9 @@ import io.github.scottcowe.chess.engine.*;
 
 public class Main {
   public static void main(String[] args) {
-    //simpleGame(); 
-    
-
+    simpleGame(); 
   }
 
-  public static int perft(Position pos, int depth) {
-    int nodes = 0;
-
-    List<Move> moves = Position.getAllPseudoLegalMoves(pos); 
-    moves = Position.removeIllegalMoves(moves, pos);
-
-    if (depth == 1) {
-      return moves.size();
-    }
-
-    for (int i = 0; i < moves.size(); i++) {
-      Move move = moves.get(i);
-
-      Position newPos = pos.doMove(move);
-      nodes += perft(newPos, depth - 1);
-    }
-
-    return nodes;
-  }
 
   public static void simpleGame() {
     Position pos = new Position();

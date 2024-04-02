@@ -463,6 +463,7 @@ public class Position {
     }
 
     // if direction pm 1 contains enemy piece then that is legal move
+    // aha - bug is going over edge of board when capturing
     if (board[index + direction + 1].isWhite() != isWhite && !board[index + direction + 1].equals(Piece.NONE)) {
       moves.add(new Move(Move.MoveType.IRREVERSIBLE, pos).setFromIndex(index).setToIndex(index + direction + 1));
     }

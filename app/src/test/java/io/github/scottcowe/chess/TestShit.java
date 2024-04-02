@@ -1,6 +1,6 @@
 package io.github.scottcowe.chess;
 
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
@@ -15,18 +15,9 @@ public class TestShit {
   void perftDefaultPosition() {
     Position pos = new Position();
 
-    int depth3 = 0;
-
-    HashMap<String, Integer> depth3Divide = divide(pos, 3);
-
-    for (String s : depth3Divide.keySet()) {
-      depth3 += depth3Divide.get(s);
-      System.out.println(s + ": " + depth3Divide.get(s));
-    }
-
     int depth1 = this.perft(pos, 1);
     int depth2 = this.perft(pos, 2);
-    //int depth3 = this.perft(pos, 3);
+    int depth3 = this.perft(pos, 3);
 
     // Values from https://www.chessprogramming.org/Perft_Results
     assertEquals(depth1, 20);
@@ -34,6 +25,24 @@ public class TestShit {
     assertEquals(depth3, 8902);
     //assertEquals(this.perft(pos, 4), 197281);
     //assertEquals(this.perft(pos, 5), 4865609);
+  }
+
+  @Test
+  @Disabled
+  void divideTestPos() {
+    Position pos = new Position("rnbqkbnr/1ppppppp/8/p7/8/7P/PPPPPPP1/RNBQKBNR w KQkq - 0 1");
+    int depth = 1;
+
+    int result = 0;
+
+    HashMap<String, Integer> results = divide(pos, depth);
+
+    for (String s : results.keySet()) {
+      result += results.get(s);
+      System.out.println(s + ": " + results.get(s));
+    }
+
+    assertEquals(1 + 1, 3);
   }
 
   private static int perft(Position pos, int depth) {
