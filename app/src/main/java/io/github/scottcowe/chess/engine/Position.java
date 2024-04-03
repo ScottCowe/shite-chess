@@ -154,6 +154,10 @@ public class Position {
     return new Position(newBoard, !this.whitesMove, newCastlingRights, newEnPassentTargetIndex, newHalfmoveClock, newFullmoveCounter);
   }
 
+  public Position turnSwitch() {
+    return new Position(this.board, !this.whitesMove, this.castlingRights, this.enPassentTargetIndex, this.halfmoveClock, this.fullmoveCounter);
+  }
+
   public static List<Move> removeIllegalMoves(List<Move> pseudoLegalMoves, Position pos) {
     List<Move> moves = pseudoLegalMoves;
 
@@ -170,10 +174,19 @@ public class Position {
     return moves;
   }
 
-  public static boolean isSquareAttacked(int index, Position pos, boolean pseudoLegal) {
-    // Get pseudolegal moves for side that is attacking
-    // if pseudoLegal is false then check legal moves as well
-    List<Move> moves = Position.getAllPseudoLegalMoves(pos);
+  public static boolean isSquareAttacked(int index, Position pos) {
+    Position turnSwitched = pos.turnSwitch();
+    List<Move> moves = Position.getAllPseudoLegalMoves(turnSwitched);
+
+    for (Move move : moves) {
+      if (move.getType().equals(Move.MoveType.CASTLING)) {
+        continue; // Can be ignored as this does not attack any pieces
+      }
+
+      if (move.getToIndex() == index) {
+        return true;
+      }
+    }
 
     return false;
   }
@@ -182,8 +195,25 @@ public class Position {
     boolean isWhite = pos.isWhitesMove();
 
     if (move.getType().equals(Move.MoveType.CASTLING)) {
-      // if king square, or adj squares until excl rook are attacked then illegal 
+      int castling = move.getCastling();
+      boolean kingside = castling == 8 || castling == 2;
+      int offset = isWhite ? 0 : 56;
       
+      List<Integer> squaresToCheck = new ArrayList<Integer>();
+
+      int i = 4;
+      while (i != (kingside ? 7 : 0)) {
+        squaresToCheck.add(i + offset);
+        i += (kingside ? 1 : -1);
+      }
+
+      for(Integer index : squaresToCheck) {
+        if (Position.isSquareAttacked(index, pos)) {
+          return false;
+        }
+      }
+
+      return true;
     }
 
     Position newPos = pos.doMove(move);
@@ -192,7 +222,12 @@ public class Position {
     Piece king = pos.isWhitesMove() ? Piece.WHITE_KING : Piece.BLACK_KING;
 
     for (Move m : moves) {
+      if (m.getType().equals(Move.MoveType.CASTLING)) {
+        continue; // can be ignored as castling is not an attacking move
+      }
+
       int toIndex = m.getToIndex();
+
       if (newPos.getBoard()[toIndex].equals(king)) {
         return false;
       }
@@ -462,18 +497,21 @@ public class Position {
       moves.add(new Move(Move.MoveType.IRREVERSIBLE, pos).setFromIndex(index).setToIndex(index + 2 * direction));
     }
 
-    // if direction pm 1 contains enemy piece then that is legal move
-    // aha - bug is going over edge of board when capturing
-    if (board[index + direction + 1].isWhite() != isWhite && !board[index + direction + 1].equals(Piece.NONE)) {
-      moves.add(new Move(Move.MoveType.IRREVERSIBLE, pos).setFromIndex(index).setToIndex(index + direction + 1));
+    int endIndex = index + direction + 1;
+    boolean goingOverEdge = (index + 1) % 8 == 0 && endIndex % 8 == 0;
+    if (board[endIndex].isWhite() != isWhite && !board[endIndex].equals(Piece.NONE) && !goingOverEdge) {
+      moves.add(new Move(Move.MoveType.IRREVERSIBLE, pos).setFromIndex(index).setToIndex(endIndex));
+    }
+    else if (endIndex == enPassentTargetIndex && !goingOverEdge) {
+      moves.add(new Move(Move.MoveType.IRREVERSIBLE, pos).setFromIndex(index).setToIndex(enPassentTargetIndex).setEnPassent());
     }
 
-    if (board[index + direction - 1].isWhite() != isWhite && !board[index + direction - 1].equals(Piece.NONE)) {
-      moves.add(new Move(Move.MoveType.IRREVERSIBLE, pos).setFromIndex(index).setToIndex(index + direction - 1));
+    endIndex = index + direction - 1;
+    goingOverEdge = index % 8 == 0 && (endIndex + 1) % 8 == 0;
+    if (board[endIndex].isWhite() != isWhite && !board[endIndex].equals(Piece.NONE) && !goingOverEdge) {
+      moves.add(new Move(Move.MoveType.IRREVERSIBLE, pos).setFromIndex(index).setToIndex(endIndex));
     }
-
-    // if en passent target is set and pawn is in position then that is a legal move
-    if (enPassentTargetIndex == index + direction + 1 || enPassentTargetIndex == index + direction - 1) {
+    else if (endIndex == enPassentTargetIndex && !goingOverEdge) {
       moves.add(new Move(Move.MoveType.IRREVERSIBLE, pos).setFromIndex(index).setToIndex(enPassentTargetIndex).setEnPassent());
     }
 

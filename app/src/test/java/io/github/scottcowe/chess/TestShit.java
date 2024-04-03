@@ -15,16 +15,22 @@ public class TestShit {
   void perftDefaultPosition() {
     Position pos = new Position();
 
-    int depth1 = this.perft(pos, 1);
-    int depth2 = this.perft(pos, 2);
-    int depth3 = this.perft(pos, 3);
-
     // Values from https://www.chessprogramming.org/Perft_Results
-    assertEquals(depth1, 20);
-    assertEquals(depth2, 400);
-    assertEquals(depth3, 8902);
-    //assertEquals(this.perft(pos, 4), 197281);
-    //assertEquals(this.perft(pos, 5), 4865609);
+    assertEquals(this.perft(pos, 1), 20);
+    assertEquals(this.perft(pos, 2), 400);
+    assertEquals(this.perft(pos, 3), 8902);
+    assertEquals(this.perft(pos, 4), 197281);
+    assertEquals(this.perft(pos, 5), 4865609);
+  }
+
+  @Test
+  void perftPositionOne() {
+    Position pos = new Position("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1");
+
+    assertEquals(this.perft(pos, 1), 48);
+    assertEquals(this.perft(pos, 2), 2039);
+    assertEquals(this.perft(pos, 3), 97862);
+    assertEquals(this.perft(pos, 4), 4085603);
   }
 
   @Test
