@@ -14,6 +14,7 @@
         packages = with pkgs; [
           jdk
           gradle
+          stockfish
         ];
 
         shellHook = ''
