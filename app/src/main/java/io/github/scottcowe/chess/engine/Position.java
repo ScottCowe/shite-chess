@@ -478,6 +478,7 @@ public class Position {
     return moves;
   }
 
+  // TODO: You forgot to implement promotion, you fucking idiot
   public static List<Move> getPawnMoves(int index, boolean isWhite, Position pos) {
     int enPassentTargetIndex = pos.getEnPassentTargetIndex();
     Piece[] board = pos.getBoard();
