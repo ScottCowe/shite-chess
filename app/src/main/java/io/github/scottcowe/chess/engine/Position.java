@@ -478,11 +478,13 @@ public class Position {
     return moves;
   }
 
-  // TODO: You forgot to implement promotion, you fucking idiot
   public static List<Move> getPawnMoves(int index, boolean isWhite, Position pos) {
     int enPassentTargetIndex = pos.getEnPassentTargetIndex();
     Piece[] board = pos.getBoard();
     List<Move> moves = new ArrayList<Move>();
+
+    int currentRank = (int) (index / 8);
+    int promotionRank = isWhite ? 7 : 0;
 
     int direction = isWhite ? 8 : -8;
 
@@ -515,6 +517,33 @@ public class Position {
     else if (endIndex == enPassentTargetIndex && !goingOverEdge) {
       moves.add(new Move(Move.MoveType.IRREVERSIBLE, pos).setFromIndex(index).setToIndex(enPassentTargetIndex).setEnPassent());
     }
+
+    List<Move> toRemove = new ArrayList<Move>();
+    List<Move> toAdd = new ArrayList<Move>();
+
+    for (Move move : moves) {
+      int fromIndex = move.getFromIndex();
+      int toIndex = move.getToIndex();
+      int toRank = (int) (toIndex / 8);
+
+      if (toRank != promotionRank) {
+        continue;
+      }
+
+      toRemove.add(move);
+
+      Piece.Type[] options = { Piece.Type.QUEEN, Piece.Type.ROOK, Piece.Type.BISHOP, Piece.Type.KNIGHT };
+
+      for (Piece.Type type : options) {
+        Piece promoteTo = Piece.getFromType(type, isWhite);  
+        Move m = new Move(Move.MoveType.PROMOTION, pos).setFromIndex(fromIndex).setToIndex(toIndex).setPromoteTo(promoteTo);
+
+        toAdd.add(m);
+      }
+    }
+
+    moves.removeAll(toRemove);
+    moves.addAll(toAdd);
 
     return moves;
   }

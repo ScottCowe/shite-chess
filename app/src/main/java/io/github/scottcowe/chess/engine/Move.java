@@ -238,7 +238,7 @@ public class Move {
     if (this.getType().equals(MoveType.PROMOTION)) {
       char promoteToChar = this.promoteTo.getAsChar();
 
-      algebraic += "=" + promoteToChar;
+      algebraic += "=" + Character.toUpperCase(promoteToChar);
     }
 
     return algebraic;
@@ -276,7 +276,8 @@ public class Move {
       if (string.length() == 0) {
         return new Move(MoveType.PROMOTION, pos)
           .setFromIndex(toIndex - (whitesMove ? 8 : -8))
-          .setToIndex(toIndex);
+          .setToIndex(toIndex)
+          .setPromoteTo(promoteTo);
       }
 
       int fromCol = string.charAt(0) - 'a';
@@ -284,7 +285,8 @@ public class Move {
 
       return new Move(MoveType.PROMOTION, pos)
         .setFromIndex(fromIndex)
-        .setToIndex(toIndex);
+        .setToIndex(toIndex)
+        .setPromoteTo(promoteTo);
     }
 
     String toAlgebraic = string.substring(string.length() - 2);

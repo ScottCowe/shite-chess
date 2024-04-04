@@ -192,4 +192,23 @@ public enum Piece {
         return NONE;
     }
   }
+
+  public static Piece getFromType(Type type, boolean isWhite) {
+    switch (type) {
+      case Type.KING:
+        return isWhite ? WHITE_KING : BLACK_KING;
+      case Type.QUEEN:
+        return isWhite ? WHITE_QUEEN : BLACK_QUEEN;
+      case Type.ROOK:
+        return isWhite ? WHITE_ROOK : BLACK_ROOK;
+      case Type.BISHOP:
+        return isWhite ? WHITE_BISHOP : BLACK_BISHOP;
+      case Type.KNIGHT:
+        return isWhite ? WHITE_KNIGHT: BLACK_KNIGHT;
+      case Type.PAWN:
+        return isWhite ? WHITE_PAWN : BLACK_PAWN;
+      default:
+        return WHITE_QUEEN;
+    }
+  }
 }
