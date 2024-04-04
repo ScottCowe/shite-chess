@@ -46,6 +46,17 @@ public class Move {
 
   public Move setCastling(int castling) {
     this.castling = castling;
+
+    // set to and from - this is mainly for the divide testing to match stockfish
+    boolean isWhite = castling > 2;
+    boolean kingside = castling == 8 || castling == 2;
+
+    int fromIndex = 4 + (isWhite ? 0 : 56);
+    int toIndex = fromIndex + (kingside ? 2 : -2);
+
+    this.fromIndex = fromIndex;
+    this.toIndex = toIndex;
+
     return this;
   }
 
@@ -98,6 +109,36 @@ public class Move {
     int direction = (fromIndex - toIndex) / 16;
 
     return toIndex + 8 * direction;
+  }
+
+  public int getCastlingRightsMask() {
+    int mask = 0b0000; // allow all
+
+    boolean kingmove = this.position.getBoard()[this.fromIndex].getType().equals(Piece.Type.KING);
+    boolean rookmove = this.position.getBoard()[this.fromIndex].getType().equals(Piece.Type.ROOK);
+    boolean castling = this.type.equals(MoveType.CASTLING);
+    boolean isWhite = this.position.getBoard()[this.fromIndex].isWhite();
+
+    if (kingmove || castling) {
+      //  disallow castling
+      mask = 0b11;
+
+      if (isWhite) {
+        mask = mask << 2;
+      }
+    }
+    else if (rookmove) {
+      //  disallow castling for that side
+      boolean kingside = this.fromIndex % 8 != 0;
+
+      mask = kingside ? 0b10 : 0b1;
+        
+      if (isWhite) {
+        mask = mask << 2;
+      }
+    }
+    
+    return ~mask;
   }
 
   public Piece[] applyToBoard() {

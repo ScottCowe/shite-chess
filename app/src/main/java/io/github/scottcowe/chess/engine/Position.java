@@ -146,7 +146,7 @@ public class Position {
 
   public Position doMove(Move move) {
     Piece[] newBoard = move.applyToBoard();
-    int newCastlingRights = this.castlingRights & ~move.getCastling();
+    int newCastlingRights = this.castlingRights & move.getCastlingRightsMask(); 
     int newEnPassentTargetIndex = move.getEnPassentTargetIndex();
     int newHalfmoveClock = move.getType().equals(Move.MoveType.IRREVERSIBLE) ? 0 : this.halfmoveClock + 1;
     int newFullmoveCounter = this.fullmoveCounter + (this.whitesMove ? 0 : 1);
