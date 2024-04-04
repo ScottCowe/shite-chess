@@ -36,7 +36,7 @@ public class TestShit {
   @Test
   @Disabled
   void divideTestPos() {
-    Position pos = new Position("rnbqkbnr/1ppppppp/8/p7/8/7P/PPPPPPP1/RNBQKBNR w KQkq - 0 1");
+    Position pos = new Position("r3k2r/p1pNqpb1/bn2pnp1/3P4/1p2P3/2N2Q1p/PPPBBPPP/R3K2R b KQkq - 0 1");
     int depth = 1;
 
     int result = 0;
@@ -47,6 +47,8 @@ public class TestShit {
       result += results.get(s);
       System.out.println(s + ": " + results.get(s));
     }
+
+    System.out.println(result);
 
     assertEquals(1 + 1, 3);
   }
@@ -59,6 +61,10 @@ public class TestShit {
 
     if (depth == 1) {
       return moves.size();
+    }
+
+    if (depth == 0) {
+      return 1;
     }
 
     for (int i = 0; i < moves.size(); i++) {

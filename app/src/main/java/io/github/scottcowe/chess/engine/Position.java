@@ -202,7 +202,7 @@ public class Position {
       List<Integer> squaresToCheck = new ArrayList<Integer>();
 
       int i = 4;
-      while (i != (kingside ? 7 : 0)) {
+      while (i != (kingside ? 7 : 1)) {
         squaresToCheck.add(i + offset);
         i += (kingside ? 1 : -1);
       }
