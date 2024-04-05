@@ -132,7 +132,12 @@ public class Position {
     return this.board[index];
   }
 
-  public static List<Integer> getPieceIndexesOfType(Piece piece, Piece[] board) {
+  public void setPieceAtIndex(int index, Piece piece) {
+    this.board[index] = piece; 
+  }
+
+  public static List<Integer> getPieceIndexesOfType(Piece piece, Position pos) {
+    Piece[] board = pos.getBoard();
     List<Integer> indexes = new ArrayList<Integer>();
 
     for (int i = 0; i < 64; i++) {
@@ -176,8 +181,27 @@ public class Position {
 
   public static boolean isSquareAttacked(int index, Position pos) {
     Position turnSwitched = pos.turnSwitch();
+
     List<Move> moves = Position.getAllPseudoLegalMoves(turnSwitched);
 
+    // Exception for pawns, as if the square has no piece, a pseudolegal move is not generated
+    Piece piece = turnSwitched.isWhitesMove() ? Piece.WHITE_PAWN : Piece.BLACK_PAWN;
+    List<Integer> pawnIndexes = Position.getPieceIndexesOfType(piece, pos);
+    int direction = turnSwitched.isWhitesMove() ? 8 : -8;
+
+    for (int i : pawnIndexes) {
+      int attackingRank = i + direction;
+      
+      if (index == attackingRank + 1 && attackingRank % 8 != 0) {
+        return true;
+      }
+
+      if (index == attackingRank - 1 && (attackingRank + 1) % 8 != 0) {
+        return true;
+      }
+    }
+
+    // For other moves
     for (Move move : moves) {
       if (move.getType().equals(Move.MoveType.CASTLING)) {
         continue; // Can be ignored as this does not attack any pieces
@@ -241,7 +265,7 @@ public class Position {
 
     for (Piece pieceType : Piece.values()) {
       if (pieceType != Piece.NONE && pieceType.isWhite() == pos.isWhitesMove()) {
-        List<Integer> indexes = Position.getPieceIndexesOfType(pieceType, pos.getBoard());
+        List<Integer> indexes = Position.getPieceIndexesOfType(pieceType, pos);
         for (Integer index : indexes) {
           moves.addAll(Position.getPseudoLegalMovesForPiece(index, pos));
         }
