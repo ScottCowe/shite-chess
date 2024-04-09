@@ -112,33 +112,50 @@ public class Move {
   }
 
   public int getCastlingRightsMask() {
-    int mask = 0b0000; // allow all
-
-    boolean kingmove = this.position.getBoard()[this.fromIndex].getType().equals(Piece.Type.KING);
-    boolean rookmove = this.position.getBoard()[this.fromIndex].getType().equals(Piece.Type.ROOK);
-    boolean castling = this.type.equals(MoveType.CASTLING);
     boolean isWhite = this.position.getBoard()[this.fromIndex].isWhite();
+    
+    boolean kingmove = this.position.getBoard()[this.fromIndex].getType().equals(Piece.Type.KING);
+    boolean castling = this.type.equals(MoveType.CASTLING);
 
     if (kingmove || castling) {
-      //  disallow castling
-      mask = 0b11;
+      int mask = 0b11;
 
       if (isWhite) {
         mask = mask << 2;
       }
-    }
-    else if (rookmove) {
-      //  disallow castling for that side
-      boolean kingside = this.fromIndex % 8 != 0;
 
-      mask = kingside ? 0b10 : 0b1;
-        
-      if (isWhite) {
-        mask = mask << 2;
-      }
+      return ~mask;
     }
+      
+    boolean kingside = this.fromIndex % 8 != 0;
+    int mask = kingside ? 0b10 : 0b01;
+
+    boolean rookmove = this.position.getBoard()[this.fromIndex].getType().equals(Piece.Type.ROOK);
     
-    return ~mask;
+    if (rookmove) {
+      if (isWhite) {
+        mask = mask << 2;
+      }
+
+      return ~mask;
+    }
+
+    Piece enemyRook = isWhite ? Piece.BLACK_ROOK: Piece.WHITE_ROOK;
+    boolean capturingRook = this.position.getBoard()[this.toIndex].equals(enemyRook);
+    boolean movingToStartingRookSquare = this.toIndex == (!isWhite ? 0 : 56) 
+      || this.toIndex == (!isWhite ? 7 : 63); 
+
+    // Should not matter that not accounting for rook moving back to original square 
+    // as the mask will have not effect when and-ed on rights that have already been changed
+    if (capturingRook && movingToStartingRookSquare) {
+      if (!isWhite) {
+        mask = mask << 2;
+      }
+
+      return ~mask;
+    }
+
+    return 0b1111;
   }
 
   public Piece[] applyToBoard() {
