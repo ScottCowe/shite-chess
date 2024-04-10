@@ -65,6 +65,16 @@ public class TestShit {
   }
 
   @Test
+  void perftPositionFive() {
+    Position pos = new Position("r4rk1/1pp1qppp/p1np1n2/2b1p1B1/2B1P1b1/P1NP1N2/1PP1QPPP/R4RK1 w - - 0 10");
+
+    assertEquals(this.perft(pos, 1), 46); 
+    assertEquals(this.perft(pos, 2), 2079); 
+    assertEquals(this.perft(pos, 3), 89890); 
+    assertEquals(this.perft(pos, 4), 3894594); 
+  }
+
+  @Test
   @Disabled
   void divideTestPos() {
     Position pos = new Position("8/2p5/3p4/1P5r/KR3p1k/8/4P1P1/8 b - - 0 1");
