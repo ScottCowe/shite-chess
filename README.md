@@ -3,8 +3,10 @@ This is going to (hopefully) be a (shite) chess engine and bot.
 
 ## Engine
 
-The engine will only support chess variants that have positions than can be stored using FEN and PGN
+Only supports standard chess
+Still debugging move generation
 
 ## Bot
 
-Who knows, standard for sure tho
+Will only support standard chess
+Not even started yet

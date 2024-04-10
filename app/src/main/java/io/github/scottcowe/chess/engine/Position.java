@@ -615,10 +615,10 @@ public class Position {
         newIndex += 9;
         break;
       case 1:
-        newIndex -= 9;
+        newIndex -= 7;
         break;
       case 2:
-        newIndex -= 7;
+        newIndex -= 9;
         break;
       case 3:
         newIndex += 7;

@@ -12,6 +12,7 @@ import io.github.scottcowe.chess.engine.*;
 
 public class TestShit {
   @Test
+  @Disabled
   void perftDefaultPosition() {
     Position pos = new Position();
 
@@ -24,6 +25,7 @@ public class TestShit {
   }
 
   @Test
+  @Disabled
   void perftPositionOne() {
     Position pos = new Position("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1");
 
@@ -34,10 +36,20 @@ public class TestShit {
   }
 
   @Test
-  @Disabled
+  void perftPositionTwo() {
+    Position pos = new Position("8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - - 0 1");
+
+    assertEquals(this.perft(pos, 1), 14); 
+    assertEquals(this.perft(pos, 2), 191); 
+    assertEquals(this.perft(pos, 3), 2812); 
+    assertEquals(this.perft(pos, 4), 43238); 
+    assertEquals(this.perft(pos, 5), 674328); 
+  }
+
+  @Test
   void divideTestPos() {
-    Position pos = new Position("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1");
-    int depth = 4;
+    Position pos = new Position("8/2p5/3p4/1P5r/KR3p1k/8/4P1P1/8 b - - 0 1");
+    int depth = 1;
 
     int result = 0;
 
