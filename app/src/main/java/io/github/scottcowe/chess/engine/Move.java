@@ -18,6 +18,7 @@ public class Move {
   private Piece promoteTo;
   private int castling;
   private boolean enPassent;
+  private MoveEffect moveEffect;
 
   public Move(MoveType type, Position position) {
     this.type = type;
@@ -27,6 +28,7 @@ public class Move {
     this.promoteTo = Piece.NONE;
     this.castling = 0;
     this.enPassent = false;
+    this.moveEffect = MoveEffect.NONE;
   }
 
   public Move setFromIndex(int fromIndex) {
@@ -62,6 +64,11 @@ public class Move {
 
   public Move setEnPassent() {
     this.enPassent = true;
+    return this;
+  }
+
+  public Move setMoveEffect(MoveEffect effect) {
+    this.moveEffect = effect;
     return this;
   }
 
