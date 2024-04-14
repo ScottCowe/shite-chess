@@ -49,7 +49,6 @@ public class Move {
   public Move setCastling(int castling) {
     this.castling = castling;
 
-    // set to and from - this is mainly for the divide testing to match stockfish
     boolean isWhite = castling > 2;
     boolean kingside = castling == 8 || castling == 2;
 
@@ -206,192 +205,32 @@ public class Move {
 
   @Override
   public String toString() {
-    if (this.type == MoveType.CASTLING) {
-      if (this.castling == 8 || this.castling == 2) {
-        return "O-O";
-      }
-
-      return "O-O-O";
-    }
-
     String fromAlgebraic = Position.getAlgebraicFromIndex(this.fromIndex);
     String toAlgebraic = Position.getAlgebraicFromIndex(this.toIndex);
 
-    char fromChar = this.position.getBoard()[fromIndex].getAsChar();
+    String algebraic = fromAlgebraic + toAlgebraic;
 
-    // Check if mutiple pieces could move to the square
-    List<Move> allMoves = Position.getAllPseudoLegalMoves(this.position);
-    //allMoves = Position.removeIllegalMoves(allMoves, this.position);
-    allMoves.remove(this);
-
-    Piece[] board = this.position.getBoard();
-
-    boolean sameRow = true;
-    boolean sameCol = true;
-
-    for (Move move : allMoves) {
-      if (move.getToIndex() == this.toIndex && board[move.getFromIndex()] == board[this.fromIndex] /*&& !this.equals(move)*/) {
-        if (Math.abs(this.fromIndex - move.getFromIndex()) % 8 != 0) {
-          sameCol = false;
-        }
-
-        if (Math.abs(this.fromIndex - move.getFromIndex()) > 7) {
-          sameRow = false;
-        }
-      }
-    }
-
-    String algebraic = toAlgebraic;
-
-    if (!board[this.toIndex].equals(Piece.NONE)) { // If capture
-      algebraic = "x" + algebraic;
-    }
-
-    if (!sameRow) {
-      algebraic = Character.toString((int) (this.fromIndex / 8) + '1') + algebraic;
-    }
-
-    if (!sameCol) {
-      algebraic = Character.toString(this.fromIndex % 8 + 'a') + algebraic;
-    }
-      
-    if (Character.toUpperCase(fromChar) != 'P') {
-      algebraic = Character.toUpperCase(fromChar) + algebraic;
-    }
-
-    if (this.getType().equals(MoveType.PROMOTION)) {
-      char promoteToChar = this.promoteTo.getAsChar();
-
-      algebraic += "=" + Character.toUpperCase(promoteToChar);
+    if (this.moveType.equals(MoveType.PROMOTION)) {
+      char promoteToChar = this.promoteTo.getAsChar(); 
+      algebraic += Character.toUpperCase(promoteToChar);
     }
 
     return algebraic;
   }
 
   public static Move fromString(String string, Position pos) {
-    boolean whitesMove = pos.isWhitesMove();
+    String fromAlgebraic = string.substring(0, 2); 
+    String toAlgebraic = string.substring(2, 4); 
 
-    string = string.trim();
+    if (string.length() == 5) { // if promotion
+      char promoteToChar = string[4];
 
-    if (string.contains("O-O-O")) {
-      int castling = 1 << (whitesMove ? 2 : 0);
-      return new Move(MoveType.CASTLING, pos).setCastling(castling);
+      Move move = new Move(MoveType.PROMOTION, pos)
+        .setFromIndex(Position.getIndexFromAlgebraic(fromAlgebraic))
+        .setToIndex(Position.getIndexFromAlgebraic(toAlgebraic))
+        ; 
     }
-    else if (string.contains("O-O")) {
-      int castling = 2 << (whitesMove ? 2 : 0);
-      return new Move(MoveType.CASTLING, pos).setCastling(castling);
-    }
-
-    boolean capture = string.contains("x");
-    string = string.replace("x", "");
-    MoveType moveType = capture ? MoveType.IRREVERSIBLE : MoveType.STANDARD;
-
-    if (string.contains("=")) {
-      char promoteToChar = string.substring(string.length() - 1).charAt(0);
-      Piece promoteTo = Piece.getFromChar(whitesMove ? promoteToChar : Character.toLowerCase(promoteToChar));
-
-      string = string.replace("=" + promoteToChar, "");
-
-      String toAlgebraic = string.substring(string.length() - 2);
-      int toIndex = Position.getIndexFromAlgebraic(toAlgebraic);
-
-      string = string.replace(toAlgebraic, "");
-
-      if (string.length() == 0) {
-        return new Move(MoveType.PROMOTION, pos)
-          .setFromIndex(toIndex - (whitesMove ? 8 : -8))
-          .setToIndex(toIndex)
-          .setPromoteTo(promoteTo);
-      }
-
-      int fromCol = string.charAt(0) - 'a';
-      int fromIndex = 48 + fromCol;
-
-      return new Move(MoveType.PROMOTION, pos)
-        .setFromIndex(fromIndex)
-        .setToIndex(toIndex)
-        .setPromoteTo(promoteTo);
-    }
-
-    String toAlgebraic = string.substring(string.length() - 2);
-    int toIndex = Position.getIndexFromAlgebraic(toAlgebraic);
-
-    string = string.replace(toAlgebraic, "");
-
-    Piece fromPiece = Piece.NONE;
-    int fromRow = -1;
-    int fromCol = -1;
-
-    if (string.length() != 0) {
-      char firstChar = string.charAt(0);
-      if (Character.isUpperCase(firstChar)) {
-        fromPiece = Piece.getFromChar(whitesMove ? firstChar : Character.toLowerCase(firstChar));
-      }
-
-      string = string.replace(firstChar + "", ""); 
-    }
-
-    if (string.length() != 0) {
-      char firstChar = string.charAt(0);
-      if (Character.isDigit(firstChar)) {
-        fromRow = firstChar - '1';
-      }
-      else {
-        fromCol = firstChar - 'a';
-      }
-      
-      string = string.replace(firstChar + "", ""); 
-    }
-
-    if (string.length() != 0) {
-      fromRow = string.charAt(0) - '1'; // as col comes before row, if the string still has a char at this point, it must be row
-      string = string.replace(string.charAt(0) + "", "");
-    }
-
-    List<Move> possibleMoves = Position.getAllPseudoLegalMoves(pos); 
-    possibleMoves = Position.removeIllegalMoves(possibleMoves, pos);
-
-    List<Move> toRemove = new ArrayList<Move>();
-
-    for (Move move : possibleMoves) {
-      if (move.getToIndex() != toIndex) {
-        toRemove.add(move);
-        continue;
-      }
-
-      if (!pos.getBoard()[move.getFromIndex()].equals(fromPiece) && fromPiece != Piece.NONE) {
-        toRemove.add(move);
-        continue;
-      }
-
-      int moveFromRow = (int) move.getFromIndex() / 8;
-      int moveFromCol = move.getFromIndex() % 8;
-
-      if (moveFromRow != fromRow && fromRow != -1) {
-        toRemove.add(move);
-        continue;
-      }
-
-      if (moveFromCol != fromCol && fromCol != -1) {
-        toRemove.add(move);
-        continue;
-      }
-    }
-
-    possibleMoves.removeAll(toRemove);
-
-    if (possibleMoves.size() == 1) {
-      return possibleMoves.get(0);
-    }
-
-    if (possibleMoves.size() > 1) {
-      for (Move move : possibleMoves) {
-        if (pos.getBoard()[move.getFromIndex()].getType().equals(Piece.Type.PAWN)) {
-          return move;
-        }
-      }
-    }
-
+    
     return null;
   }
 
