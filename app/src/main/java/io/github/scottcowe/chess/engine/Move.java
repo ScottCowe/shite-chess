@@ -18,7 +18,6 @@ public class Move {
   private Piece promoteTo;
   private int castling;
   private boolean enPassent;
-  private MoveEffect moveEffect;
 
   public Move(MoveType type, Position position) {
     this.type = type;
@@ -28,7 +27,6 @@ public class Move {
     this.promoteTo = Piece.NONE;
     this.castling = 0;
     this.enPassent = false;
-    this.moveEffect = MoveEffect.NONE;
   }
 
   public Move setFromIndex(int fromIndex) {
@@ -63,11 +61,6 @@ public class Move {
 
   public Move setEnPassent() {
     this.enPassent = true;
-    return this;
-  }
-
-  public Move setMoveEffect(MoveEffect effect) {
-    this.moveEffect = effect;
     return this;
   }
 
@@ -218,6 +211,7 @@ public class Move {
     return algebraic;
   }
 
+  // No validation is done - assumes movestring is correct and legal
   public static Move fromString(String string, Position pos) {
     String fromAlgebraic = string.substring(0, 2); 
     String toAlgebraic = string.substring(2, 4); 
@@ -225,12 +219,48 @@ public class Move {
     if (string.length() == 5) { // if promotion
       char promoteToChar = string[4];
 
+      if (!pos.isWhitesMove()) {
+        promoteToChar = Character.toLowerCase(promoteToChar);
+      }
+
+      Piece promoteTo = Piece.getFromChar(promoteToChar);
+
       Move move = new Move(MoveType.PROMOTION, pos)
         .setFromIndex(Position.getIndexFromAlgebraic(fromAlgebraic))
         .setToIndex(Position.getIndexFromAlgebraic(toAlgebraic))
-        ; 
+        .setPromoteTo(promoteTo); 
+
+      return move;
     }
+
+    int fromIndex = Position.getIndexFromAlgebraic(fromAlgebraic);
+    int toIndex = Position.getIndexFromAlgebraic(toIndex);
+
+    int diff = Math.abs(fromIndex - toIndex);
+    boolean kingmove = pos.getPieceAtIndex(fromIndex).getType().equals(Piece.PieceType.KING);
+
+    if (kingmove && diff != 1 && diff != 8 && diff != 9) {
+      int castling = 0;
+
+      if (fromIndex - toIndex == 2) {
+        castling = 0b01;
+      }
+      else {
+        castling = 0b10;
+      }
+
+      if (fromIndex < 8) {
+        castling = castling << 2;
+      }
+
+      Move move = new Move(MoveType.CASTLING, pos)
+        .setCastling(castling);
+
+      return move;
+    }
+   
     
+
     return null;
   }
 
