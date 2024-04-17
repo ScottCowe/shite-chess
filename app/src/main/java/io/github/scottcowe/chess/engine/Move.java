@@ -203,7 +203,7 @@ public class Move {
 
     String algebraic = fromAlgebraic + toAlgebraic;
 
-    if (this.moveType.equals(MoveType.PROMOTION)) {
+    if (this.type.equals(MoveType.PROMOTION)) {
       char promoteToChar = this.promoteTo.getAsChar(); 
       algebraic += Character.toUpperCase(promoteToChar);
     }
@@ -217,7 +217,7 @@ public class Move {
     String toAlgebraic = string.substring(2, 4); 
 
     if (string.length() == 5) { // if promotion
-      char promoteToChar = string[4];
+      char promoteToChar = string.charAt(4);
 
       if (!pos.isWhitesMove()) {
         promoteToChar = Character.toLowerCase(promoteToChar);
@@ -234,10 +234,10 @@ public class Move {
     }
 
     int fromIndex = Position.getIndexFromAlgebraic(fromAlgebraic);
-    int toIndex = Position.getIndexFromAlgebraic(toIndex);
+    int toIndex = Position.getIndexFromAlgebraic(toAlgebraic);
 
     int diff = Math.abs(fromIndex - toIndex);
-    boolean kingmove = pos.getPieceAtIndex(fromIndex).getType().equals(Piece.PieceType.KING);
+    boolean kingmove = pos.getPieceAtIndex(fromIndex).getType().equals(Piece.Type.KING);
 
     if (kingmove && diff != 1 && diff != 8 && diff != 9) {
       int castling = 0;
@@ -260,10 +260,26 @@ public class Move {
     }
    
     MoveType moveType = MoveType.STANDARD;
-    Move move;
+    boolean enPassent = false;
 
-    // if move is pawn move or capture then set move type to irreversible
-    // if move type is double pawn advance then set en passent
+    if (pos.getPieceAtIndex(fromIndex).getType().equals(Piece.Type.PAWN)) {
+      moveType = MoveType.IRREVERSIBLE;
+
+      if (Math.abs(fromIndex - toIndex) == 16) {
+        enPassent = true;
+      }
+    }
+    else if (!pos.getPieceAtIndex(toIndex).equals(Piece.NONE)) {
+      moveType = MoveType.IRREVERSIBLE;
+    }
+
+    Move move = new Move(moveType, pos)
+      .setFromIndex(fromIndex)
+      .setToIndex(toIndex);
+
+    if (enPassent) {
+      move = move.setEnPassent();
+    }
 
     return move;
   }
