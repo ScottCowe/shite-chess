@@ -259,9 +259,13 @@ public class Move {
       return move;
     }
    
-    
+    MoveType moveType = MoveType.STANDARD;
+    Move move;
 
-    return null;
+    // if move is pawn move or capture then set move type to irreversible
+    // if move type is double pawn advance then set en passent
+
+    return move;
   }
 
   @Override
