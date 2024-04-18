@@ -38,7 +38,8 @@ public class Main {
 
       Move move = Move.fromString(moveString, pos);
 
-      if (move == null) {
+      // TODO: Maybe fix this
+      if (move == null /*|| !moves.contains(move)*/) {
         System.out.println("Nuh uh");
         continue;
       }
