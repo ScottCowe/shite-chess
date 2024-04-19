@@ -42,8 +42,20 @@ public class UCI {
         continue; 
       }
 
+      String argName = split[i];
+      String arg = "";
 
+      int j = i + 1;
+
+      while (!allArgs.contains(next)) {
+        arg += split[j] + " ";
+        j += 1;
+      }
+
+      args.put(argName, args);
     }
+
+    // do something
   }
 
   public void sendOutput(String output) {
