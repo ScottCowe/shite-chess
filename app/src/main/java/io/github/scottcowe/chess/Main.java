@@ -15,7 +15,8 @@ public class Main {
 
   public static void uci() {
     UCI uci = UCI.getInstance();
-    uci.init();
+    Thread uciThread = new Thread(uci);
+    uciThread.start();
   }
 
   public static void simpleGame() {

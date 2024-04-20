@@ -5,10 +5,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
-public class UCI {
+public class UCI implements Runnable {
   private static UCI INSTANCE;
 
   private List<UCICommand> commands = new ArrayList<UCICommand>();
+
+  public void run() {
+  
+  }
 
   public void recieveInput(String input) {
     String[] split = input.trim().split("\\s+");
@@ -65,10 +69,6 @@ public class UCI {
   }
 
   public void recieveCommand(UCICommand cmd) {
-
-  }
-
-  public void init() {
 
   }
 
