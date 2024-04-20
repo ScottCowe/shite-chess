@@ -6,7 +6,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 public class UCI {
-  private List<UCICommand> commands = new ArrayList<UCICommand>():
+  private static UCI INSTANCE;
+
+  private List<UCICommand> commands = new ArrayList<UCICommand>();
 
   public void recieveInput(String input) {
     String[] split = input.trim().split("\\s+");
@@ -28,8 +30,8 @@ public class UCI {
       return;
     }
 
-    String[] requiredArgs = cmd.getArgs();
-    String[] optionalArgs = cmd.getOptionalArgs();
+    String[] requiredArgs = command.getArgs();
+    String[] optionalArgs = command.getOptionalArgs();
     List<String> allArgs = new ArrayList<String>();
     allArgs.addAll(Arrays.asList(requiredArgs));
     allArgs.addAll(Arrays.asList(optionalArgs));
@@ -47,19 +49,19 @@ public class UCI {
 
       int j = i + 1;
 
-      while (!allArgs.contains(next)) {
+      while (!allArgs.contains(split[j])) {
         arg += split[j] + " ";
         j += 1;
       }
 
-      args.put(argName, args);
+      args.put(argName, arg);
     }
 
     // do something
   }
 
   public void sendOutput(String output) {
-  
+    System.out.println(output); 
   }
 
   public void recieveCommand(UCICommand cmd) {
@@ -78,5 +80,13 @@ public class UCI {
     }
 
     return null;
+  }
+
+  public static UCI getInstance() {
+    if (INSTANCE == null) {
+      INSTANCE = new UCI();
+    }
+
+    return INSTANCE;
   }
 }

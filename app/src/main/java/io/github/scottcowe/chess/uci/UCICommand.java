@@ -22,10 +22,10 @@ public class UCICommand {
   }
 
   public String[] getArgs() {
-    return this.args;
+    return this.argNames;
   }
 
   public String[] getOptionalArgs() {
-    return this.optionalArgs;
+    return this.optionalArgNames;
   }
 }
