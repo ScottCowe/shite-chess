@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Scanner;
+
+import io.github.scottcowe.chess.uci.commands.*;
 
 public class UCI implements Runnable {
   private static UCI INSTANCE;
@@ -11,7 +14,17 @@ public class UCI implements Runnable {
   private List<UCICommand> commands = new ArrayList<UCICommand>();
 
   public void run() {
-  
+    // Init
+    commands.add(new UCICmd());
+
+    Scanner scanner = new Scanner(System.in); 
+
+    System.out.println("awaiting");
+
+    while(true) {
+      String input = scanner.nextLine();
+      this.recieveInput(input);
+    }
   }
 
   public void recieveInput(String input) {
@@ -61,20 +74,16 @@ public class UCI implements Runnable {
       args.put(argName, arg);
     }
 
-    // do something
+    command.doStuff(args);
   }
 
   public void sendOutput(String output) {
     System.out.println(output); 
   }
 
-  public void recieveCommand(UCICommand cmd) {
-
-  }
-
   public UCICommand getCommandByName(String name) {
     for (UCICommand cmd : this.commands) {
-      if (cmd.getName() == name) {
+      if (cmd.getName().equals(name)) {
         return cmd;
       }
     }
