@@ -12,6 +12,9 @@ public class UCICmd extends UCICommand {
   @Override
   public void doStuff(HashMap<String, String> args) {
     UCI uci = UCI.getInstance(); 
+    uci.sendOutput("id name shite-chess");
+    uci.sendOutput("id author ScottCowe");
+    // options
     uci.sendOutput("uciok");
   }
 }
