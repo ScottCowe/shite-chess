@@ -31,7 +31,13 @@ public class Game {
   }
 
   public static boolean isStalemate(Position pos) {
-    // if not in check and no legal moves then true
+    boolean inCheck = Position.inCheck(pos, pos.isWhitesMove());
+    List<Move> moves = Position.getPseudoLegalMoves(pos);
+    moves = Position.removeIllegalMoves(moves, pos);
+
+    if (!inCheck && moves.size() == 0) {
+      return true;
+    }
 
     return false;
   }
