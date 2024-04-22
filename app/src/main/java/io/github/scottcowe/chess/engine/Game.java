@@ -17,15 +17,26 @@ public class Game {
     // Check for checkmate, stalemate, or draw by repetition
   }
 
-  public boolean isCheckmate(Position pos) {
+  public static boolean isCheckmate(Position pos) {
+    // Get list of all pieces attacking king
+    // If length is 0
+    //  not checkmate
+    // if length is 2
+    //  get all legal king moves
+    //  if none then mate
+    //  if a move puts king out of check then not mate
+    //  else mate
+
     return false;
   }
 
-  public boolean isStalemate(Position pos) {
+  public static boolean isStalemate(Position pos) {
+    // if not in check and no legal moves then true
+
     return false;
   }
 
-  public boolean isDrawByRepetition(Position pos) {
+  public static boolean isDrawByRepetition(Position pos, List<Position> positions) {
     return false;
   }
 

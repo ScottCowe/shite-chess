@@ -149,6 +149,23 @@ public class Position {
     return indexes;
   }
 
+  public static int getKingIndex(Position pos, boolean whitesMove) {
+    Piece piece = whitesMove ? Piece.WHITE_KING : Piece.BLACK_KING;
+    List<Integer> pieces = Position.getPieceIndexesOfType(piece, pos);
+
+    return pieces.get(0);
+  }
+  
+  public static boolean inCheck(Position pos, boolean whitesKing) {
+    if (whitesKing == pos.isWhitesMove()) {
+      pos = pos.turnSwitch();
+    }
+
+    int kingIndex = Position.getKingIndex(pos, whitesKing);
+
+    return Position.isSquareAttacked(kingIndex, pos);
+  }
+
   public Position doMove(Move move) {
     Piece[] newBoard = move.applyToBoard();
     int newCastlingRights = this.castlingRights & move.getCastlingRightsMask(); 
