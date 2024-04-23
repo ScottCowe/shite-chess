@@ -149,8 +149,8 @@ public class Position {
     return indexes;
   }
 
-  public static int getKingIndex(Position pos, boolean whitesMove) {
-    Piece piece = whitesMove ? Piece.WHITE_KING : Piece.BLACK_KING;
+  public static int getKingIndex(Position pos, boolean whitesKing) {
+    Piece piece = whitesKing ? Piece.WHITE_KING : Piece.BLACK_KING;
     List<Integer> pieces = Position.getPieceIndexesOfType(piece, pos);
 
     return pieces.get(0);

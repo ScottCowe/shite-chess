@@ -1,6 +1,7 @@
 package io.github.scottcowe.chess.engine;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Game {
   private List<Position> positions;
@@ -12,20 +13,34 @@ public class Game {
   }
 
   public void doMove(Move move) {
-    // Apply move to position
-    // Append position to positions
+    if (this.result != 0b00) {
+      System.out.println("cannot play move in completed game");
+      return;
+    }
+
+    Position pos = this.getCurrentPosition().doMove(move);
+    this.positions.add(pos);
+
     // Check for checkmate, stalemate, or draw by repetition
+    if (Game.isCheckmate(pos)) {
+      this.result = pos.isWhitesMove() ? 0b11 : 0b10;
+    }
+    else if (Game.isStalemate(pos) || Game.isDrawByRepetition(pos, this.positions)) {
+      this.result = 0b01;
+    }
   }
 
+  // TODO: Check that logic is sound (and that it actually works)
+
   public static boolean isCheckmate(Position pos) {
-    // Get list of all pieces attacking king
-    // If length is 0
-    //  not checkmate
-    // if length is 2
-    //  get all legal king moves
-    //  if none then mate
-    //  if a move puts king out of check then not mate
-    //  else mate
+    List<Move> moves = Position.getPseudoLegalMoves(pos.turnSwitch());
+    moves = Position.removeIllegalMoves(moves, pos.turnSwitch());
+
+    boolean inCheck = Position.inCheck(pos, pos.isWhitesMove());
+
+    if (inCheck && moves.size() == 0) {
+      return true
+    }
 
     return false;
   }
