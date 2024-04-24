@@ -1,6 +1,7 @@
 package io.github.scottcowe.chess.engine;
 
 import java.util.List;
+import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 public class Game {
@@ -10,6 +11,18 @@ public class Game {
   public Game(List<Position> positions, int result) {
     this.positions = positions;
     this.result = result;
+  }
+
+  public Game(Position initialPos) {
+    List<Position> positions = new ArrayList<Position>();
+    positions.add(initialPos);
+    
+    this.positions = positions;
+    this.result = 0b00;
+  }
+
+  public Game() {
+    this(new Position()); 
   }
 
   public void doMove(Move move) {
@@ -33,13 +46,13 @@ public class Game {
   // TODO: Check that logic is sound (and that it actually works)
 
   public static boolean isCheckmate(Position pos) {
-    List<Move> moves = Position.getPseudoLegalMoves(pos.turnSwitch());
+    List<Move> moves = Position.getAllPseudoLegalMoves(pos.turnSwitch());
     moves = Position.removeIllegalMoves(moves, pos.turnSwitch());
 
     boolean inCheck = Position.inCheck(pos, pos.isWhitesMove());
 
     if (inCheck && moves.size() == 0) {
-      return true
+      return true;
     }
 
     return false;
@@ -47,7 +60,7 @@ public class Game {
 
   public static boolean isStalemate(Position pos) {
     boolean inCheck = Position.inCheck(pos, pos.isWhitesMove());
-    List<Move> moves = Position.getPseudoLegalMoves(pos);
+    List<Move> moves = Position.getAllPseudoLegalMoves(pos);
     moves = Position.removeIllegalMoves(moves, pos);
 
     if (!inCheck && moves.size() == 0) {
@@ -59,6 +72,10 @@ public class Game {
 
   public static boolean isDrawByRepetition(Position pos, List<Position> positions) {
     return false;
+  }
+
+  public boolean ended() {
+    return this.result != 0b00;
   }
 
   public void addPosition(Position pos) {

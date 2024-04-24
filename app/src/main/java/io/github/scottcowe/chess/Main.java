@@ -2,15 +2,15 @@ package io.github.scottcowe.chess;
 
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 import io.github.scottcowe.chess.engine.*;
 import io.github.scottcowe.chess.uci.*;
 
 public class Main {
   public static void main(String[] args) {
-    //simpleGame();
-    //simpleGame(new Position("8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - - 0 1")); 
-    uci();
+    simpleGame(new Position());
+    //uci();
   }
 
   public static void uci() {
@@ -19,41 +19,34 @@ public class Main {
     uciThread.start();
   }
 
-  public static void simpleGame() {
-    Position pos = new Position();
-    simpleGame(pos);
-  }
-
   public static void simpleGame(Position pos) {
-    System.out.println(pos);
+    Game game = new Game(pos);
+
+    System.out.println(game.getCurrentPosition());
 
     Scanner scanner = new Scanner(System.in);
 
-    while (true) {
-      List<Move> moves = Position.getAllPseudoLegalMoves(pos); 
+    while (!game.ended()) {
+      List<Move> moves = Position.getAllPseudoLegalMoves(game.getCurrentPosition());
       moves = Position.removeIllegalMoves(moves, pos);
-
-      String movesStr = "";
-
-      for (Move move : moves) {
-        movesStr += move + " "; 
-      }
-
-      System.out.println(movesStr);
+      List<String> moveStrings = moves.stream().map(m -> m.toString()).collect(Collectors.toList());
 
       System.out.println("What move?");
-      String moveString = scanner.nextLine();
+      String moveStr = scanner.nextLine();
+      Move move = Move.fromString(moveStr, game.getCurrentPosition());
 
-      Move move = Move.fromString(moveString, pos);
+      boolean legal = moveStrings.contains(move.toString());
 
-      // TODO: Maybe fix this
-      if (move == null /*|| !moves.contains(move)*/) {
+      if (move == null || !legal) {
         System.out.println("Nuh uh");
         continue;
       }
 
-      pos = pos.doMove(move);
-      System.out.println(pos);
+      game.doMove(move);
+
+      System.out.println(game.getCurrentPosition());
     }
+
+    System.out.println("Game ended");
   }
 }
