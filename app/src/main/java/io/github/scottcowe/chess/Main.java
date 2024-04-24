@@ -3,6 +3,7 @@ package io.github.scottcowe.chess;
 import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
+import java.util.Arrays;
 
 import io.github.scottcowe.chess.engine.*;
 import io.github.scottcowe.chess.uci.*;
@@ -31,8 +32,11 @@ public class Main {
       moves = Position.removeIllegalMoves(moves, pos);
       List<String> moveStrings = moves.stream().map(m -> m.toString()).collect(Collectors.toList());
 
+      System.out.println(Arrays.toString(moveStrings.toArray()));
+
       System.out.println("What move?");
       String moveStr = scanner.nextLine();
+
       Move move = Move.fromString(moveStr, game.getCurrentPosition());
 
       boolean legal = moveStrings.contains(move.toString());
