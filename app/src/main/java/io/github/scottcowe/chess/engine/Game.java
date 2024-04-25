@@ -48,8 +48,8 @@ public class Game {
   // TODO: Check that logic is sound (and that it actually works)
 
   public static boolean isCheckmate(Position pos) {
-    List<Move> moves = Position.getAllPseudoLegalMoves(pos.turnSwitch());
-    moves = Position.removeIllegalMoves(moves, pos.turnSwitch());
+    List<Move> moves = Position.getAllPseudoLegalMoves(pos);
+    moves = Position.removeIllegalMoves(moves, pos);
 
     boolean inCheck = Position.inCheck(pos, pos.isWhitesMove());
 

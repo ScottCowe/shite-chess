@@ -157,10 +157,6 @@ public class Position {
   }
   
   public static boolean inCheck(Position pos, boolean whitesKing) {
-    if (whitesKing == pos.isWhitesMove()) {
-      pos = pos.turnSwitch();
-    }
-
     int kingIndex = Position.getKingIndex(pos, whitesKing);
 
     return Position.isSquareAttacked(kingIndex, pos);
