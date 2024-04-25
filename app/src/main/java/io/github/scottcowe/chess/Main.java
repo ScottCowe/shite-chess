@@ -10,7 +10,8 @@ import io.github.scottcowe.chess.uci.*;
 
 public class Main {
   public static void main(String[] args) {
-    simpleGame(new Position());
+    simpleGame(new Position()); 
+    //simpleGame(new Position("rnbqkbnr/pppp1ppp/8/4p3/6P1/5P2/PPPPP2P/RNBQKBNR b KQkq g3 0 2"));
     //uci();
   }
 
@@ -30,6 +31,7 @@ public class Main {
     while (!game.ended()) {
       List<Move> moves = Position.getAllPseudoLegalMoves(game.getCurrentPosition());
       moves = Position.removeIllegalMoves(moves, pos);
+      System.out.println(moves.size());
       List<String> moveStrings = moves.stream().map(m -> m.toString()).collect(Collectors.toList());
 
       System.out.println(Arrays.toString(moveStrings.toArray()));
