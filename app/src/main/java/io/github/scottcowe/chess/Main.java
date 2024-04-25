@@ -34,7 +34,7 @@ public class Main {
 
       System.out.println(Arrays.toString(moveStrings.toArray()));
 
-      System.out.println("What move?");
+      System.out.println("\nWhat move?");
       String moveStr = scanner.nextLine();
 
       Move move = Move.fromString(moveStr, game.getCurrentPosition());
@@ -52,5 +52,6 @@ public class Main {
     }
 
     System.out.println("Game ended");
+    System.out.println("Result: " + game.getResult()); 
   }
 }

@@ -688,6 +688,7 @@ public class Position {
     board += "\nEn passent target: " + this.getAlgebraicFromIndex(this.enPassentTargetIndex);
     board += "\nHalfmove clock: " + this.halfmoveClock;
     board += "\nFullmove count: " + this.fullmoveCounter;
+    board += "\n";
 
     return board;
   }

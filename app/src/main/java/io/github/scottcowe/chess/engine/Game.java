@@ -36,9 +36,11 @@ public class Game {
 
     // Check for checkmate, stalemate, or draw by repetition
     if (Game.isCheckmate(pos)) {
+      System.out.println("checkmate");
       this.result = pos.isWhitesMove() ? 0b11 : 0b10;
     }
     else if (Game.isStalemate(pos) || Game.isDrawByRepetition(pos, this.positions)) {
+      System.out.println("stalemate/draw");
       this.result = 0b01;
     }
   }
@@ -59,9 +61,10 @@ public class Game {
   }
 
   public static boolean isStalemate(Position pos) {
-    boolean inCheck = Position.inCheck(pos, pos.isWhitesMove());
     List<Move> moves = Position.getAllPseudoLegalMoves(pos);
     moves = Position.removeIllegalMoves(moves, pos);
+    
+    boolean inCheck = Position.inCheck(pos, pos.isWhitesMove());
 
     if (!inCheck && moves.size() == 0) {
       return true;
