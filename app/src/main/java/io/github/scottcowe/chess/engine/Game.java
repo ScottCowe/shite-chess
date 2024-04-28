@@ -39,13 +39,11 @@ public class Game {
       System.out.println("checkmate");
       this.result = pos.isWhitesMove() ? 0b11 : 0b10;
     }
-    else if (Game.isStalemate(pos) || Game.isDrawByRepetition(pos, this.positions)) {
+    else if (Game.isStalemate(pos) || Game.isDrawByRepetition(pos, this.positions) || Game.isDrawBy50(pos)) {
       System.out.println("stalemate/draw");
       this.result = 0b01;
     }
   }
-
-  // TODO: Check that logic is sound (and that it actually works)
 
   public static boolean isCheckmate(Position pos) {
     List<Move> moves = Position.getAllPseudoLegalMoves(pos);
@@ -72,8 +70,29 @@ public class Game {
 
     return false;
   }
+  
+  public static boolean isDrawBy50(Position pos) {
+    if (pos.getHalfmoveClock() >= 100) {
+      return true;
+    }
 
+    return false;
+  }
+
+  // TODO: Optimise
   public static boolean isDrawByRepetition(Position pos, List<Position> positions) {
+    int count = 0;
+
+    for (Position position : positions) {
+      if (position.equals(pos)) {
+        count += 1;
+      }
+
+      if (count == 3) {
+        return true;
+      }
+    }
+
     return false;
   }
 
