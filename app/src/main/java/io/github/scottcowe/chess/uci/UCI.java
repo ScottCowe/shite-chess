@@ -16,6 +16,7 @@ public class UCI implements Runnable {
   public void run() {
     // Init
     commands.add(new UCICmd());
+    commands.add(new UCIIsReady());
 
     Scanner scanner = new Scanner(System.in); 
 

@@ -1,6 +1,8 @@
-import io.github.scottcowe.chess.uci.commands;
+package io.github.scottcowe.chess.uci.commands;
 
 import io.github.scottcowe.chess.uci.*;
+
+import java.util.HashMap;
 
 public class UCIIsReady extends UCICommand {
   public UCIIsReady() {

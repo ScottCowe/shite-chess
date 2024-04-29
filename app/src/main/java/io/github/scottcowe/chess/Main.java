@@ -10,8 +10,8 @@ import io.github.scottcowe.chess.uci.*;
 
 public class Main {
   public static void main(String[] args) {
-    simpleGame(new Position()); 
-    //uci();
+    //simpleGame(new Position()); 
+    uci();
   }
 
   public static void uci() {
