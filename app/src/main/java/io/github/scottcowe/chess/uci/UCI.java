@@ -7,9 +7,11 @@ import java.util.HashMap;
 import java.util.Scanner;
 
 import io.github.scottcowe.chess.uci.commands.*;
+import io.github.scottcowe.chess.bot.*;
 
 public class UCI implements Runnable {
-  private static UCI INSTANCE;
+  private static final UCI INSTANCE;
+  private Bot bot; 
 
   private List<UCICommand> commands = new ArrayList<UCICommand>();
 
@@ -98,5 +100,9 @@ public class UCI implements Runnable {
     }
 
     return INSTANCE;
+  }
+
+  public void setBot(Bot bot) {
+    this.bot = bot;
   }
 }

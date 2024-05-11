@@ -1,12 +1,15 @@
 package io.github.scottcowe.chess;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
-import java.util.Arrays;
 
-import io.github.scottcowe.chess.engine.*;
-import io.github.scottcowe.chess.uci.*;
+import javax.swing.text.Position;
+
+import io.github.scottcowe.chess.engine.Game;
+import io.github.scottcowe.chess.engine.Move;
+import io.github.scottcowe.chess.uci.UCI;
 
 public class Main {
   public static void main(String[] args) {
@@ -16,6 +19,7 @@ public class Main {
 
   public static void uci() {
     UCI uci = UCI.getInstance();
+    uci.setBot(new Bot());
     Thread uciThread = new Thread(uci);
     uciThread.start();
   }
