@@ -6,3 +6,9 @@ build
 
 # Ignore jdtls directory
 .nvim-jtdls
+
+.settings
+
+.idea
+
+bin
